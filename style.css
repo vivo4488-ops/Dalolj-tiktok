@@ -1,6 +1,5 @@
-body {
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-    color:white;
-    font-family:Arial;
-    text-align:center;
-}
+<body> 
+{background: linear-gradient(to right, #4facfe, #00f2fe);
+color:white;
+font-family:Arial;
+text-align:center;}
