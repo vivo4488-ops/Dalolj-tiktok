@@ -2,36 +2,42 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Tiktok Rádió</title>
+    <title>TikTok Rádió Lacival</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>🎧 Tiktok Rádió</h1>
+<header>
+    <h1>🎧 TikTok Rádió Lacival</h1>
+    <p>Élő műsor • Közösség • Zene</p>
+</header>
 
-<!-- SZÍVKÜLDI -->
-<section>
-    <h2>💌 Szívküldi</h2>
-    <input id="messageInput" placeholder="Írd ide az üzenetet">
-    <button onclick="sendMessage()">Küldés</button>
+<!-- LIVE PANEL -->
+<section class="card live">
+    <h2>🔴 LIVE állapot</h2>
+    <p id="status">⚫ Jelenleg nincs élő adás</p>
+
+    <button onclick="toggleLive()">LIVE kapcsoló</button>
+
+    <a class="live-btn"
+       href="https://tiktok.com"
+       target="_blank">
+       🎥 Belépés a TikTok LIVE-ba
+    </a>
 </section>
 
-<!-- ZENEKÉRÉS -->
-<section>
-    <h2>🎵 Zenekérés</h2>
-    <input id="songInput" placeholder="Milyen számot kérsz?">
-    <button onclick="requestSong()">Kérés</button>
-</section>
+<!-- MŰSOR -->
+<section class="card">
+    <h2>📅 Mai műsor</h2>
 
-<!-- SZAVAZÁS -->
-<section>
-    <h2>📊 Szavazás</h2>
-    <button onclick="vote('A')">A</button>
-    <button onclick="vote('B')">B</button>
-    <p id="result"></p>
+    <div class="program">
+        <p><strong>13:00</strong> – 🇭🇺 90-es évek magyar zenéi</p>
+        <p><strong>14:00</strong> – 💌 Szívküldi + zenék beolvasása</p>
+        <p><strong>16:00</strong> – 🎵 Kért zenék lejátszása</p>
+    </div>
 </section>
-
-<script src="script.js"></script>
 
 </body>
+
+<script src="script.js"></script>
 </html>
