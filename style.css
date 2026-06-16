@@ -1,52 +1,27 @@
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(270deg, #36d1dc, #5b86e5, #4facfe);
-    background-size: 600% 600%;
-    animation: bgMove 10s ease infinite;
-    color: white;
+    font-family: Arial;
     text-align: center;
-}
-
-@keyframes bgMove {
-    0% { background-position: 0% }
-    50% { background-position: 100% }
-    100% { background-position: 0% }
-}
-
-nav {
-    background: #111;
-    padding: 15px;
-}
-
-.hero {
-    padding: 60px 20px;
-}
-
-.glow {
-    text-shadow: 0 0 15px white;
-}
-
-.btn {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #00c6ff;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
     color: white;
-    border-radius: 20px;
-    text-decoration: none;
 }
 
-.box {
-    background: rgba(255,255,255,0.1);
-    margin: 20px;
+section {
+    margin: 30px;
     padding: 20px;
-    border-radius: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
 }
 
 button {
-    margin: 10px;
     padding: 10px 15px;
+    margin-left: 10px;
     border: none;
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: pointer;
 }
