@@ -12,32 +12,46 @@
     <p>Élő műsor • Közösség • Zene</p>
 </header>
 
-<!-- LIVE PANEL -->
+<!-- LIVE -->
 <section class="card live">
     <h2>🔴 LIVE állapot</h2>
     <p id="status">⚫ Jelenleg nincs élő adás</p>
-
     <button onclick="toggleLive()">LIVE kapcsoló</button>
-
-    <a class="live-btn"
-       href="https://tiktok.com"
-       target="_blank">
-       🎥 Belépés a TikTok LIVE-ba
-    </a>
+    <a class="live-btn" href="https://tiktok.com" target="_blank">🎥 TikTok LIVE</a>
 </section>
 
 <!-- MŰSOR -->
 <section class="card">
-    <h2>📅 Mai műsor</h2>
-
-    <div class="program">
-        <p><strong>13:00</strong> – 🇭🇺 90-es évek magyar zenéi</p>
-        <p><strong>14:00</strong> – 💌 Szívküldi + zenék beolvasása</p>
-        <p><strong>16:00</strong> – 🎵 Kért zenék lejátszása</p>
-    </div>
+    <h2>📅 Műsor</h2>
+    <p>13:00 – 90-es évek magyar zenéi</p>
+    <p>14:00 – 💌 Szívküldi + üzenetek</p>
+    <p>16:00 – 🎵 Kért zenék</p>
 </section>
 
-</body>
+<!-- SZAVAZÁS -->
+<section class="card">
+    <h2>📊 Szavazás</h2>
+    <button onclick="vote('A')">Pop</button>
+    <button onclick="vote('B')">Rap</button>
+    <p id="result">Szavazatok: még nincs</p>
+</section>
+
+<!-- ZENEKÉRÉS -->
+<section class="card">
+    <h2>🎵 Zenekérés</h2>
+    <input id="songInput" placeholder="Kért zene...">
+    <button onclick="requestSong()">Küldés</button>
+    <ul id="songList"></ul>
+</section>
+
+<!-- SZÍVKÜLDI -->
+<section class="card">
+    <h2>💌 Szívküldi üzenet</h2>
+    <input id="msgInput" placeholder="Üzenet...">
+    <button onclick="sendMessage()">Küldés</button>
+    <ul id="msgList"></ul>
+</section>
 
 <script src="script.js"></script>
+</body>
 </html>
