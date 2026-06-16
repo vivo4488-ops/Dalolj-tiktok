@@ -1,32 +1,17 @@
-// SZAVAZÁS
-let votes = { pop: 0, rap: 0, retro: 0 };
-
-function vote(type) {
-    votes[type]++;
-    document.getElementById("result").innerText =
-        `Pop: ${votes.pop} | Rap: ${votes.rap} | Retro: ${votes.retro}`;
+function sendMessage() {
+    let msg = document.getElementById("messageInput").value;
+    alert("Üzenet elküldve: " + msg);
 }
 
-// ZENEKÉRÉS
 function requestSong() {
-    let song = document.getElementById("song").value;
-    if (song === "") return;
-
-    let li = document.createElement("li");
-    li.textContent = song;
-    document.getElementById("songList").appendChild(li);
-
-    document.getElementById("song").value = "";
+    let song = document.getElementById("songInput").value;
+    alert("Zenekérés: " + song);
 }
 
-// SZÍVKÜLDI
-function sendMsg() {
-    let msg = document.getElementById("msg").value;
-    if (msg === "") return;
+let votes = { A: 0, B: 0 };
 
-    let li = document.createElement("li");
-    li.textContent = "💖 " + msg;
-    document.getElementById("msgList").appendChild(li);
-
-    document.getElementById("msg").value = "";
+function vote(option) {
+    votes[option]++;
+    document.getElementById("result").innerText =
+        "A: " + votes.A + " | B: " + votes.B;
 }
