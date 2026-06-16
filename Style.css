@@ -1,8 +1,8 @@
 body {
-    background-color: lightblue; /* háttér */
-    color: darkblue; /* szöveg szín */
-    font-family: Arial; /* betű */
-    text-align: center; /* középre */
+    background-color: lightblue;
+    color: darkblue;
+    font-family: Arial;
+    text-align: center;
 }
 
 h1 {
