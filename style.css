@@ -1,25 +1,6 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-    <meta charset="UTF-8">
-    <title>Oldal</title>
-
-    <style>
-        body {
-            background-color: lightblue;
-            color: darkblue;
-            font-family: Arial;
-            text-align: center;
-        }
-
-        h1 {
-            margin-top: 50px;
-        }
-    </style>
-
-</head>
-<body>
-
-    <h1>Helló!</h1>
-    <p>Ez egy szebb oldal.</p>
-
+body {
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
