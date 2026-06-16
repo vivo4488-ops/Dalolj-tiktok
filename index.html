@@ -2,37 +2,45 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <title>Tiktok Rádió</title>
+    <title>TikTok Rádió</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-    <h2>🎵 Tiktok Rádió</h2>
+    <h2>🎵 TikTok Rádió</h2>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-
-    <h1 class="glow">🎧 Hallgasd élőben</h1>
-
-    <!-- HANGHULLÁM -->
-    <div class="equalizer">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <!-- LEJÁTSZÓ -->
-    <audio controls autoplay>
-        <!-- IDE ÍRD A SAJÁT STREAMED -->
-        <source src="https://stream-url-ide.mp3" type="audio/mpeg">
-    </audio>
-
+    <h1 class="glow">🎧 Csatlakozz a TikTok Rádióhoz!</h1>
+    <a href="https://tiktok.com" target="_blank" class="btn">Megnyitás TikTokon</a>
 </section>
 
+<!-- SZAVAZÁS -->
+<section class="box">
+    <h2>🗳️ Melyik stílust szereted?</h2>
+    <button onclick="vote('pop')">Pop</button>
+    <button onclick="vote('rap')">Rap</button>
+    <button onclick="vote('retro')">Retro</button>
+    <p id="result"></p>
+</section>
+
+<!-- ZENEKÉRÉS -->
+<section class="box">
+    <h2>🎶 Zenekérés</h2>
+    <input type="text" id="song" placeholder="Dal címe">
+    <button onclick="requestSong()">Küldés</button>
+    <ul id="songList"></ul>
+</section>
+
+<!-- SZÍVKÜLDI -->
+<section class="box">
+    <h2>💖 Szívküldi üzenet</h2>
+    <input type="text" id="msg" placeholder="Üzenet...">
+    <button onclick="sendMsg()">Küldés</button>
+    <ul id="msgList"></ul>
+</section>
+
+<script src="script.js"></script>
 </body>
 </html>
