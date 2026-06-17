@@ -14,7 +14,6 @@ background: radial-gradient(circle,#0a1a3a,#000);
 overflow-x:hidden;
 }
 
-/* háttér */
 .bg{
 position:fixed;
 width:200%;
@@ -31,18 +30,20 @@ z-index:-1;
 100%{transform:rotate(360deg);}
 }
 
-/* LIVE */
+h1{margin-top:15px;}
+
 #live{
-font-size:26px;
+font-size:28px;
 margin:15px auto;
 padding:20px;
 width:80%;
 border-radius:15px;
+transition:0.3s;
 }
 
 .onair{
 background:red;
-box-shadow:0 0 25px red,0 0 50px red;
+box-shadow:0 0 30px red;
 animation:pulse 1s infinite;
 }
 
@@ -54,11 +55,10 @@ background:#222;
 50%{transform:scale(1.05);}
 }
 
-/* box */
 section{
 margin:15px auto;
 width:90%;
-max-width:700px;
+max-width:750px;
 padding:15px;
 background:rgba(255,255,255,0.06);
 border-radius:12px;
@@ -75,10 +75,17 @@ background:#00aaff;
 color:white;
 }
 
-/* wave */
+input,textarea{
+width:90%;
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+
 .wave{
 height:30px;
-background: repeating-linear-gradient(
+background:repeating-linear-gradient(
 90deg,
 #00c6ff,
 #0072ff 10px,
@@ -94,6 +101,13 @@ margin:10px 0;
 100%{background-position:100px;}
 }
 
+.box{
+background:rgba(255,255,255,0.1);
+padding:8px;
+margin:5px;
+border-radius:8px;
+text-align:left;
+}
 </style>
 </head>
 
@@ -104,20 +118,20 @@ margin:10px 0;
 <h1>🎧 TikTok Rádió Lacival</h1>
 
 <div id="live" class="offair">⚫ OFF AIR</div>
+
 <div class="wave"></div>
 
 <!-- BEMUTATKOZÁS -->
 <section>
-<h2>📢 Rádió ismertető</h2>
+<h2>📢 Bemutatkozás</h2>
 <p>
 A <b>TikTok Rádió Lacival</b> egy élő TikTok rádió 🎙️<br><br>
-
 🔥 LIVE adások TikTokon<br>
-🎵 Zenekérések és mixek<br>
+🎵 Zenék és mixek<br>
 💌 Szívküldi üzenetek<br>
 📊 Napi és állandó szavazások<br>
-📢 Reklám lehetőség<br>
-📞 Kapcsolat és elérhetőség<br>
+📢 Reklámkérések<br>
+📅 Műsor tematikák<br>
 </p>
 </section>
 
@@ -152,8 +166,19 @@ A <b>TikTok Rádió Lacival</b> egy élő TikTok rádió 🎙️<br><br>
 <!-- REKLÁM -->
 <section>
 <h2>📢 Reklámkérés</h2>
-<input id="ad" placeholder="Reklám üzenet"><br>
+<input id="ad" placeholder="Reklám szöveg"><br>
 <button onclick="sendAd()">Küldés</button>
+</section>
+
+<!-- MŰSORREND -->
+<section>
+<h2>📅 Műsor tematika</h2>
+<div id="schedule"></div>
+
+<h3>🔐 Admin (helyi szerkesztés)</h3>
+<input id="time" placeholder="Idő (pl 13:00-14:00)">
+<input id="title" placeholder="Műsor neve">
+<button onclick="addSchedule()">Hozzáadás</button>
 </section>
 
 <!-- ELÉRHETŐSÉG -->
@@ -165,13 +190,12 @@ A <b>TikTok Rádió Lacival</b> egy élő TikTok rádió 🎙️<br><br>
 <script>
 
 /* LIVE */
-let live = false;
+let live=false;
 
 function updateLive(){
-let el = document.getElementById("live");
-
+let el=document.getElementById("live");
 if(live){
-el.innerHTML="🔴 ON AIR LIVE";
+el.innerHTML="🔴 ON AIR LIVE A TIKTOKON";
 el.className="onair";
 }else{
 el.innerHTML="⚫ OFF AIR";
@@ -182,63 +206,93 @@ updateLive();
 
 /* ÁLLANDÓ SZAVAZÁS */
 function voteFixed(v){
-let d = JSON.parse(localStorage.getItem("fixed")) || {igen:0,nem:0,jovo:0};
+let d=JSON.parse(localStorage.getItem("fixed"))||{igen:0,nem:0,jovo:0};
 d[v]++;
 localStorage.setItem("fixed",JSON.stringify(d));
 
-document.getElementById("fixedResult").innerText =
+document.getElementById("fixedResult").innerText=
 `Igen:${d.igen} Nem:${d.nem} Jövő:${d.jovo}`;
 }
 
 /* NAPI SZAVAZÁS */
-const today = new Date().getDate();
-const qList = [
+const today=new Date().getDate();
+const qList=[
 "Melyik zene legyen ma?",
 "Tetszik az adás?",
 "Milyen hangulat legyen?",
 "Maradjon a rádió?"
 ];
 
-document.getElementById("dailyQ").innerText =
-qList[today % qList.length];
+document.getElementById("dailyQ").innerText=
+qList[today%qList.length];
 
 function voteDaily(v){
-localStorage.setItem("daily_"+today, v);
+localStorage.setItem("daily_"+today,v);
 document.getElementById("dailyResult").innerText="Mentve: "+v;
 }
 
 /* ÜZENET */
 function sendMsg(){
-let msgs = JSON.parse(localStorage.getItem("messages")) || [];
+let msgs=JSON.parse(localStorage.getItem("messages"))||[];
 msgs.push({name:name.value,msg:msg.value});
 localStorage.setItem("messages",JSON.stringify(msgs));
-
 alert("Üzenet elküldve ✔");
 }
 
 /* REKLÁM */
 function sendAd(){
-let ads = JSON.parse(localStorage.getItem("ads")) || [];
+let ads=JSON.parse(localStorage.getItem("ads"))||[];
 ads.push(ad.value);
 localStorage.setItem("ads",JSON.stringify(ads));
-
 alert("Reklám elküldve ✔");
+}
+
+/* MŰSORREND */
+function loadSchedule(){
+let s=JSON.parse(localStorage.getItem("schedule"))||[];
+let box=document.getElementById("schedule");
+box.innerHTML="";
+
+if(s.length===0){
+box.innerHTML="Nincs műsor beállítva";
+return;
+}
+
+s.forEach(x=>{
+box.innerHTML+=`
+<div class="box">
+🕒 ${x.time}<br>
+📻 ${x.title}
+</div>`;
+});
+}
+
+function addSchedule(){
+let s=JSON.parse(localStorage.getItem("schedule"))||[];
+
+s.push({
+time:time.value,
+title:title.value
+});
+
+localStorage.setItem("schedule",JSON.stringify(s));
+loadSchedule();
 }
 
 /* ELÉRHETŐSÉG */
 function loadContact(){
-let c = JSON.parse(localStorage.getItem("contact"));
+let c=JSON.parse(localStorage.getItem("contact"));
 
 if(!c){
-document.getElementById("contactBox").innerText =
-"Nincs beállított elérhetőség";
+document.getElementById("contactBox").innerText="Nincs beállítva";
 return;
 }
 
-document.getElementById("contactBox").innerHTML =
-`📧 Email: ${c.email || "-"}<br>🎵 TikTok: ${c.tiktok || "-"}`;
+document.getElementById("contactBox").innerHTML=
+`📧 ${c.email||"-"}<br>🎵 ${c.tiktok||"-"}`;
 }
 
+loadSchedule();
 loadContact();
 
 </script>
