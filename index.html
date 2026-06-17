@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió</title>
+<title>TikTok Rádió Lacival</title>
 
 <style>
 body {
@@ -31,7 +31,7 @@ body {
     to { box-shadow: 0 0 30px red; }
 }
 
-/* wave */
+/* hullám */
 .wave {
     height: 40px;
     background: linear-gradient(90deg, red, transparent);
@@ -42,13 +42,14 @@ body {
     to { transform: translateX(100%); }
 }
 
-section { margin-top: 40px; }
+section { margin-top: 40px; max-width:600px; margin-left:auto; margin-right:auto;}
 
 input, textarea {
     padding: 10px;
     margin: 5px;
     border-radius: 5px;
     border: none;
+    width: 80%;
 }
 
 button {
@@ -60,15 +61,28 @@ button {
 
 <body>
 
-<h1>🎧 TikTok Rádió</h1>
+<h1>🎧 TikTok Rádió Lacival</h1>
 
 <div id="liveStatus">Betöltés...</div>
 <div class="wave"></div>
 
+<!-- ISMERTETŐ -->
+<section>
+<h2>ℹ️ Miről szól?</h2>
 <p>
-🎶 Interaktív TikTok rádió!<br>
-Szavazz, írj üzenetet, és hallgasd LIVE!
+Üdv a <b>TikTok Rádió Lacival</b> oldalán! 🎶<br><br>
+
+Ez egy interaktív online rádió, ahol:<br>
+👉 Te is beleszólhatsz, mi szóljon<br>
+👉 Üzenetet küldhetsz élő adásba<br>
+👉 Kérhetsz zenét barátodnak, párodnak 💖<br>
+👉 Részt vehetsz szavazásokban<br><br>
+
+🎧 Ha LIVE van, csatlakozz TikTokon!<br>
+💬 Küldj üzenetet – akár névvel, akár anonim<br>
+📀 Kérj zenét, amit lejátszunk adásban!
 </p>
+</section>
 
 <!-- TEMATIKA -->
 <section>
@@ -76,17 +90,16 @@ Szavazz, írj üzenetet, és hallgasd LIVE!
 <ul id="schedule"></ul>
 </section>
 
-<!-- ÁLLANDÓ SZAVAZÁS -->
+<!-- SZAVAZÁS -->
 <section>
 <h2>📊 Tetszik a TikTok rádió?</h2>
 <button onclick="vote('igen')">Igen</button>
 <button onclick="vote('nem')">Nem</button>
 <button onclick="vote('jovo')">Van jövője</button>
-
 <p id="voteResult"></p>
 </section>
 
-<!-- NAPI KÉRDÉS -->
+<!-- NAPI -->
 <section>
 <h2>❓ Napi kérdés</h2>
 <p id="dailyQuestion"></p>
@@ -95,14 +108,24 @@ Szavazz, írj üzenetet, és hallgasd LIVE!
 
 <!-- ÜZENET -->
 <section>
-<h2>💬 Üzenj</h2>
-<input id="msgName" placeholder="Neved"><br>
-<textarea id="msgText" placeholder="Üzenet"></textarea><br>
+<h2>💬 Üzenet / Zenekérés</h2>
+
+<p>
+Írj üzenetet, amit akár beolvashatunk adásban! 🎤<br>
+Írhatsz például:<br>
+👉 zenekérést<br>
+👉 üzenetet barátnak / barátnőnek 💕<br>
+👉 shoutoutot<br>
+</p>
+
+<input id="msgName" placeholder="Neved (vagy becenév)">
+<textarea id="msgText" placeholder="Üzenet vagy zenekérés..."></textarea>
 <button onclick="sendMessage()">Küldés</button>
+
 <p id="msgStatus"></p>
 </section>
 
-<!-- ELÉRHETŐSÉG -->
+<!-- KONTAKT -->
 <section>
 <h2>📢 Reklám / Kapcsolat</h2>
 <p id="contact"></p>
@@ -174,7 +197,7 @@ function sendMessage() {
     m.push({name,text,time:new Date().toLocaleString()});
     localStorage.setItem("msgs", JSON.stringify(m));
 
-    msgStatus.innerText="Elküldve!";
+    msgStatus.innerText="Elküldve! 🎧";
     msgName.value=""; msgText.value="";
 }
 
