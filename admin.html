@@ -2,83 +2,189 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>ADMIN - TikTok Rádió</title>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<title>Admin - TikTok Rádió</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#111;
+background:#0b0f1a;
 color:white;
 text-align:center;
 }
 
+h1{margin-top:15px;}
+
 section{
 margin:15px auto;
 width:90%;
-max-width:700px;
+max-width:800px;
 padding:15px;
-background:#222;
-border-radius:10px;
+background:rgba(255,255,255,0.07);
+border-radius:12px;
 }
 
 button{
 padding:10px;
 margin:5px;
+border:none;
+border-radius:8px;
 cursor:pointer;
+background:#00aaff;
+color:white;
+}
+
+input,textarea{
+width:90%;
+padding:8px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+
+.box{
+background:rgba(255,255,255,0.1);
+padding:8px;
+margin:5px;
+border-radius:8px;
+text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🔐 ADMIN PANEL</h1>
+<h1>🔐 TikTok Rádió ADMIN</h1>
 
+<!-- LIVE -->
 <section>
-<h2>🎧 LIVE vezérlés</h2>
+<h2>🎧 ON / OFF AIR</h2>
 <button onclick="setLive('on')">ON AIR</button>
 <button onclick="setLive('off')">OFF AIR</button>
+<p id="liveStatus"></p>
 </section>
 
+<!-- FIX SZAVAZÁS -->
 <section>
-<h2>💬 Üzenetek</h2>
+<h2>📊 Fix szavazás eredmény</h2>
+<div id="fixed"></div>
+<button onclick="resetFixed()">Reset</button>
+</section>
+
+<!-- NAPI SZAVAZÁS -->
+<section>
+<h2>📅 Napi szavazás beállítás</h2>
+<input id="q" placeholder="Kérdés">
+<button onclick="setDaily()">Mentés</button>
+</section>
+
+<!-- ÜZENETEK -->
+<section>
+<h2>💌 Üzenetek (anonim)</h2>
 <div id="msgs"></div>
+</section>
+
+<!-- ZENÉK -->
+<section>
+<h2>🎵 Zenekérések</h2>
+<div id="songs"></div>
+</section>
+
+<!-- MŰSOR -->
+<section>
+<h2>📅 Műsor szerkesztés</h2>
+
+<input id="ms" placeholder="Új műsor sor">
+<button onclick="addSchedule()">Hozzáad</button>
+
+<div id="schedule"></div>
 </section>
 
 <script>
 
-const firebaseConfig = {
-apiKey:"YOUR",
-authDomain:"YOUR",
-databaseURL:"YOUR",
-projectId:"YOUR",
-appId:"YOUR"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
 /* LIVE */
-function setLive(state){
-db.ref("live").set(state);
+function setLive(v){
+localStorage.setItem("live",v);
+document.getElementById("liveStatus").innerText=v==="on"?"ON AIR":"OFF AIR";
+}
+
+/* FIX SZAVAZÁS */
+function loadFixed(){
+let d=JSON.parse(localStorage.getItem("fixed"))||{igen:0,nem:0,fejlodik:0};
+
+document.getElementById("fixed").innerHTML=
+`Igen: ${d.igen} <br> Nem: ${d.nem} <br> Fejlődik: ${d.fejlodik}`;
+}
+loadFixed();
+
+function resetFixed(){
+localStorage.setItem("fixed",JSON.stringify({igen:0,nem:0,fejlodik:0}));
+loadFixed();
+}
+
+/* NAPI SZAVAZÁS */
+function setDaily(){
+localStorage.setItem("dailyQ",document.getElementById("q").value);
+alert("Mentve ✔");
 }
 
 /* ÜZENETEK */
-db.ref("messages").on("value",snap=>{
-let d=snap.val()||{};
+function loadMsgs(){
+let msgs=JSON.parse(localStorage.getItem("msgs"))||[];
 let box=document.getElementById("msgs");
 box.innerHTML="";
 
-for(let i in d){
+msgs.reverse().forEach(m=>{
 box.innerHTML+=`
-<div style="border:1px solid gray;margin:5px;padding:5px">
-<b>${d[i].name}</b>: ${d[i].msg}
+<div class="box">
+${m.msg}<br>
+<small>${m.time}</small>
 </div>`;
-}
 });
+}
+loadMsgs();
+
+/* ZENÉK */
+function loadSongs(){
+let songs=JSON.parse(localStorage.getItem("songs"))||[];
+let box=document.getElementById("songs");
+box.innerHTML="";
+
+songs.forEach(s=>{
+box.innerHTML+=`<div class="box">${s}</div>`;
+});
+}
+loadSongs();
+
+/* MŰSOR */
+function loadSchedule(){
+let s=JSON.parse(localStorage.getItem("schedule"))||[];
+let box=document.getElementById("schedule");
+box.innerHTML="";
+
+s.forEach((x,i)=>{
+box.innerHTML+=`
+<div class="box">
+${x}
+<button onclick="del(${i})">Törlés</button>
+</div>`;
+});
+}
+loadSchedule();
+
+function addSchedule(){
+let s=JSON.parse(localStorage.getItem("schedule"))||[];
+s.push(document.getElementById("ms").value);
+localStorage.setItem("schedule",JSON.stringify(s));
+loadSchedule();
+}
+
+function del(i){
+let s=JSON.parse(localStorage.getItem("schedule"))||[];
+s.splice(i,1);
+localStorage.setItem("schedule",JSON.stringify(s));
+loadSchedule();
+}
 
 </script>
 
