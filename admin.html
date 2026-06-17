@@ -4,235 +4,118 @@
 <meta charset="UTF-8">
 <title>Admin - TikTok Rádió Lacival</title>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <style>
 body{
-    background:#111;
-    color:white;
-    font-family:Arial;
-    text-align:center;
+margin:0;
+font-family:Arial;
+background:#0b1230;
+color:white;
+text-align:center;
 }
 
 section{
-    margin:20px auto;
-    width:90%;
-    max-width:700px;
-    padding:15px;
-    border:1px solid #333;
-}
-
-input,textarea{
-    width:90%;
-    padding:8px;
-    margin:5px;
+margin:20px auto;
+width:90%;
+max-width:700px;
+padding:15px;
+background:rgba(255,255,255,0.06);
+border-radius:10px;
 }
 
 button{
-    padding:8px 12px;
-    margin:5px;
-    cursor:pointer;
+padding:10px;
+margin:5px;
+cursor:pointer;
+border:none;
+border-radius:8px;
+background:#00aaff;
+color:white;
 }
 
-.msgBox{
-    border:1px solid gray;
-    margin:10px;
-    padding:10px;
+.on{background:green;}
+.off{background:red;}
+
+.box{
+border:1px solid gray;
+margin:5px;
+padding:5px;
+text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎛 Admin Panel - TikTok Rádió Lacival</h1>
+<h1>🔐 ADMIN PANEL - TikTok Rádió</h1>
 
-<!-- 🔐 LOGIN -->
-<section id="loginBox">
-<h2>Belépés</h2>
-<input id="pass" type="password" placeholder="Jelszó">
-<br>
-<button onclick="login()">Belépés</button>
-<p id="err"></p>
-</section>
-
-<!-- ADMIN -->
-<div id="panel" style="display:none;">
-
-<!-- LIVE -->
+<!-- LIVE CONTROL -->
 <section>
-<h2>🔴 LIVE vezérlés</h2>
-<button onclick="setLive(true)">LIVE BE</button>
-<button onclick="setLive(false)">LIVE KI</button>
+<h2>🎧 LIVE vezérlés</h2>
+<button onclick="setLive(true)" class="on">ON AIR</button>
+<button onclick="setLive(false)" class="off">OFF AIR</button>
+<p id="liveStatus"></p>
 </section>
 
 <!-- ÜZENETEK -->
 <section>
-<h2>📩 Üzenetek (LIVE)</h2>
+<h2>💬 Üzenetek</h2>
 <div id="messages"></div>
 </section>
 
-<!-- SZAVAZÁS EREDMÉNY -->
+<!-- REKLÁMOK -->
 <section>
-<h2>📊 Szavazás eredmény</h2>
-<p id="votes"></p>
+<h2>📢 Reklám kérések</h2>
+<div id="ads"></div>
 </section>
 
-<!-- TEMATIKA -->
+<!-- ZENEKÉRÉSEK -->
 <section>
-<h2>📅 Tematika</h2>
-
-<input id="from" placeholder="tól">
-<input id="to" placeholder="ig">
-<input id="title" placeholder="műsor">
-
-<button onclick="addSchedule()">Hozzáad</button>
-
-<div id="schedule"></div>
+<h2>🎵 Zenekérések</h2>
+<div id="songs"></div>
 </section>
-
-<!-- NAPI KÉRDÉS -->
-<section>
-<h2>❓ Napi kérdés</h2>
-
-<input id="q" placeholder="kérdés">
-<input id="a1" placeholder="válasz 1">
-<input id="a2" placeholder="válasz 2">
-<input id="a3" placeholder="válasz 3">
-
-<button onclick="saveDaily()">Mentés</button>
-</section>
-
-<!-- KONTAKT -->
-<section>
-<h2>📢 Kapcsolat / Reklám</h2>
-
-<input id="contact" placeholder="email / info">
-<button onclick="saveContact()">Mentés</button>
-</section>
-
-</div>
 
 <script>
 
-/* FIREBASE */
-const firebaseConfig = {
-  apiKey: "IDE",
-  authDomain: "IDE",
-  databaseURL: "IDE",
-  projectId: "IDE",
-  storageBucket: "IDE",
-  messagingSenderId: "IDE",
-  appId: "IDE"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-/* LOGIN */
-const PASSWORD = "radio123";
-
-function login(){
-    if(pass.value === PASSWORD){
-        loginBox.style.display="none";
-        panel.style.display="block";
-        loadMessages();
-        loadVotes();
-        loadSchedule();
-    } else {
-        err.innerText="Hibás jelszó!";
-    }
+/* LIVE CONTROL (LOCAL) */
+function setLive(v){
+localStorage.setItem("live", v ? "true" : "false");
+document.getElementById("liveStatus").innerText =
+v ? "🔴 ON AIR" : "⚫ OFF AIR";
 }
 
-/* LIVE */
-function setLive(state){
-    localStorage.setItem("radioLive", state);
+/* BETÖLTÉS LIVE STATUS */
+document.getElementById("liveStatus").innerText =
+localStorage.getItem("live")==="true" ? "🔴 ON AIR" : "⚫ OFF AIR";
+
+/* DEMO ADATOK (ha később Firebase lesz, innen kötjük össze) */
+function loadData(){
+
+/* üzenetek */
+let msgs = JSON.parse(localStorage.getItem("messages")) || [];
+let msgBox = document.getElementById("messages");
+msgBox.innerHTML="";
+msgs.forEach(m=>{
+msgBox.innerHTML += `<div class="box"><b>${m.name}</b>: ${m.msg}</div>`;
+});
+
+/* reklám */
+let ads = JSON.parse(localStorage.getItem("ads")) || [];
+let adBox = document.getElementById("ads");
+adBox.innerHTML="";
+ads.forEach(a=>{
+adBox.innerHTML += `<div class="box">${a}</div>`;
+});
+
+/* zenék */
+let songs = JSON.parse(localStorage.getItem("songs")) || [];
+let songBox = document.getElementById("songs");
+songBox.innerHTML="";
+songs.forEach(s=>{
+songBox.innerHTML += `<div class="box">${s}</div>`;
+});
 }
 
-/* ÜZENETEK */
-function loadMessages(){
-    db.ref("messages").on("value",snap=>{
-        let data=snap.val();
-        let box=document.getElementById("messages");
-        box.innerHTML="";
-
-        for(let id in data){
-            let m=data[id];
-
-            let div=document.createElement("div");
-            div.className="msgBox";
-
-            div.innerHTML=`
-                <b>${m.name}</b><br>
-                ${m.msg}<br>
-                <button onclick="del('${id}')">Törlés</button>
-            `;
-
-            box.appendChild(div);
-        }
-    });
-}
-
-function del(id){
-    db.ref("messages/"+id).remove();
-}
-
-/* SZAVAZÁS */
-function loadVotes(){
-    let v = JSON.parse(localStorage.getItem("votes")) || {igen:0,nem:0,jovo:0};
-
-    votes.innerText =
-    `Igen: ${v.igen} | Nem: ${v.nem} | Jövő: ${v.jovo}`;
-}
-
-/* TEMATIKA */
-function addSchedule(){
-    let list = JSON.parse(localStorage.getItem("schedule")) || [];
-
-    list.push({
-        from:from.value,
-        to:to.value,
-        title:title.value
-    });
-
-    localStorage.setItem("schedule",JSON.stringify(list));
-    loadSchedule();
-}
-
-function loadSchedule(){
-    let list = JSON.parse(localStorage.getItem("schedule")) || [];
-
-    schedule.innerHTML="";
-
-    list.forEach((x,i)=>{
-        let d=document.createElement("div");
-
-        d.innerHTML=`
-            ${x.from}-${x.to} | ${x.title}
-            <button onclick="delSch(${i})">X</button>
-        `;
-
-        schedule.appendChild(d);
-    });
-}
-
-function delSch(i){
-    let list = JSON.parse(localStorage.getItem("schedule"));
-    list.splice(i,1);
-    localStorage.setItem("schedule",JSON.stringify(list));
-    loadSchedule();
-}
-
-/* NAPI KÉRDÉS */
-function saveDaily(){
-    localStorage.setItem("dailyQ",q.value);
-    localStorage.setItem("dailyA",JSON.stringify([a1.value,a2.value,a3.value]));
-}
-
-/* KONTAKT */
-function saveContact(){
-    localStorage.setItem("contact",contact.value);
-}
+loadData();
 
 </script>
 
