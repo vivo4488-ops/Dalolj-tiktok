@@ -8,141 +8,126 @@
 body {
   margin:0;
   font-family: Arial;
-  background: linear-gradient(270deg,#001f4d,#003366,#001f4d);
+  background: linear-gradient(270deg, #001f4d, #003399, #001f4d);
   background-size: 600% 600%;
-  animation: bg 15s infinite;
+  animation: bgMove 10s infinite;
   color:white;
   text-align:center;
 }
 
-@keyframes bg {
+@keyframes bgMove {
   0%{background-position:0%}
   50%{background-position:100%}
   100%{background-position:0%}
 }
 
-h1 {margin-top:20px;}
+h1 { margin-top:20px; }
 
 #onair {
   font-size:40px;
   margin:20px;
-  text-shadow:0 0 20px red;
+  text-shadow: 0 0 20px red;
 }
 
 .box {
-  background: rgba(255,255,255,0.05);
-  padding:15px;
-  margin:15px;
+  background: rgba(255,255,255,0.1);
+  margin:20px;
+  padding:20px;
   border-radius:15px;
 }
 
-input,button {
+input, textarea {
+  width:80%;
   padding:10px;
-  margin:5px;
+  margin:10px;
   border-radius:10px;
   border:none;
 }
+
 button {
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
   background:#00ccff;
   color:black;
   cursor:pointer;
 }
+
+.wave {
+  height:50px;
+  margin-top:20px;
+}
+
+.bar {
+  width:5px;
+  height:20px;
+  display:inline-block;
+  margin:2px;
+  background:white;
+  animation:wave 1s infinite;
+}
+
+@keyframes wave {
+  0%{height:10px}
+  50%{height:40px}
+  100%{height:10px}
+}
 </style>
+
 </head>
 
 <body>
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="onair">Betöltés...</div>
+<div id="onair">🔴 ON AIR</div>
+
+<div class="wave">
+  <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+</div>
 
 <div class="box">
-<h3>📻 Bemutatkozás</h3>
+<h2>📻 Miről szól?</h2>
 <p>
-Ez a TikTok rádió élő műsorokkal, zenekéréssel, üzenetekkel és szavazásokkal!
-Élő adás TikTokon!
+Ez a TikTok rádió élő adásban működik!  
+Zenék, kívánságműsorok, üzenetek és interaktív műsorok várnak rád.  
+Írj a szerelmednek vagy barátaidnak — és beolvassuk élőben!
 </p>
 </div>
 
 <div class="box">
-<h3>🗳 Fix szavazás</h3>
-<button onclick="voteFixed('A')">A</button>
-<button onclick="voteFixed('B')">B</button>
-</div>
-
-<div class="box">
-<h3>🔥 Napi szavazás</h3>
-<button onclick="voteDaily('1')">1</button>
-<button onclick="voteDaily('2')">2</button>
-</div>
-
-<div class="box">
-<h3>💌 Üzenet küldése</h3>
-<input id="msg" placeholder="Írd ide...">
+<h2>📩 Üzenet küldése</h2>
+<textarea id="msg" placeholder="Írj üzenetet..."></textarea><br>
 <button onclick="sendMessage()">Küldés</button>
 </div>
 
 <div class="box">
-<h3>🎵 Zenekérés</h3>
-<input id="song" placeholder="Dal címe...">
-<button onclick="requestSong()">Küldés</button>
+<h2>🎵 Zenekérés</h2>
+<input id="song" placeholder="Előadó - szám"><br>
+<button onclick="requestSong()">Kérés</button>
 </div>
 
 <div class="box">
-<h3>📩 Elérhetőség</h3>
-<p>kohegyim44@gmail.com</p>
+<h2>📞 Kapcsolat</h2>
+<p>Email: kohegyim44@gmail.com</p>
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
 <script>
-// 🔴 IDE MÁSOLD A SAJÁTOD!
-const firebaseConfig = {
-  apiKey: "IDE",
-  authDomain: "IDE",
-  databaseURL: "IDE",
-  projectId: "IDE",
-  storageBucket: "IDE",
-  messagingSenderId: "IDE",
-  appId: "IDE"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ON AIR
-db.ref("onAir").on("value", snap=>{
-  const el = document.getElementById("onair");
-  if(snap.val()){
-    el.innerText="🔴 ON AIR";
-  } else {
-    el.innerText="⚫ OFF AIR";
-  }
-});
-
-// SZAVAZÁS
-function voteFixed(v){
-  db.ref("votes/fixed/"+v).transaction(n=>(n||0)+1);
-}
-
-function voteDaily(v){
-  db.ref("votes/daily/"+v).transaction(n=>(n||0)+1);
-}
-
-// ÜZENET
 function sendMessage(){
-  const msg=document.getElementById("msg").value;
-  db.ref("messages").push({text:msg});
-  alert("Elküldve!");
+  const msg = document.getElementById("msg").value;
+  if(!msg) return alert("Írj valamit!");
+
+  alert("Üzenet elküldve! (adásban felhasználható)");
+  document.getElementById("msg").value="";
 }
 
-// ZENE
 function requestSong(){
-  const song=document.getElementById("song").value;
-  db.ref("songs").push({text:song});
-  alert("Elküldve!");
+  const song = document.getElementById("song").value;
+  if(!song) return alert("Írj zenét!");
+
+  alert("Zenekérés elküldve!");
+  document.getElementById("song").value="";
 }
 </script>
 
