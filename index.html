@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió Lacival</title>
+<title>TikTok Rádió</title>
 
 <style>
 body {
@@ -10,41 +10,15 @@ body {
   font-family:Arial;
   color:white;
   text-align:center;
-  background: linear-gradient(270deg, #001f4d, #0033cc, #001f4d);
-  background-size: 400% 400%;
-  animation: bg 20s ease infinite;
+  background: linear-gradient(270deg,#001f4d,#0033cc,#000);
+  background-size:400% 400%;
+  animation:bg 18s ease infinite;
 }
 
-/* háttér animáció */
 @keyframes bg {
   0%{background-position:0%}
   50%{background-position:100%}
   100%{background-position:0%}
-}
-
-/* hullám */
-.wave {
-  display:flex;
-  justify-content:center;
-  margin:20px;
-}
-
-.bar {
-  width:5px;
-  height:20px;
-  margin:3px;
-  background:#00ccff;
-  animation: wave 1s infinite ease-in-out;
-}
-
-.bar:nth-child(2){animation-delay:0.1s;}
-.bar:nth-child(3){animation-delay:0.2s;}
-.bar:nth-child(4){animation-delay:0.3s;}
-.bar:nth-child(5){animation-delay:0.4s;}
-
-@keyframes wave {
-  0%,100%{height:10px;}
-  50%{height:40px;}
 }
 
 .box {
@@ -54,11 +28,12 @@ body {
   border-radius:15px;
 }
 
-#onair {
-  font-size:50px;
-  margin:20px;
-  color:red;
-  text-shadow:0 0 20px red;
+input, textarea {
+  width:80%;
+  padding:10px;
+  margin:10px;
+  border-radius:10px;
+  border:none;
 }
 
 button {
@@ -68,11 +43,6 @@ button {
   background:#00ccff;
   cursor:pointer;
 }
-
-.small {
-  font-size:14px;
-  opacity:0.8;
-}
 </style>
 </head>
 
@@ -80,125 +50,39 @@ button {
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="onair">🔴 ON AIR</div>
-
-<div class="wave">
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
-<div class="bar"></div>
+<div class="box">
+<h2>📩 Üzenet</h2>
+<textarea id="msg"></textarea><br>
+<button onclick="send('message')">Küldés</button>
 </div>
 
 <div class="box">
-<h2>📻 A rádióról</h2>
-<p>
-Ez egy élő TikTok rádió, ahol a hallgatók is alakítják a műsort.
-Zenék, hangulat, szavazások és közösségi élmény egyben.
-</p>
-<p>
-A szavazásokkal ti döntitek el, milyen legyen a műsor hangulata.
-</p>
-</div>
-
-<div class="box">
-<h2>🗳️ Fix szavazás</h2>
-<button onclick="vote('Pop')">Pop</button>
-<button onclick="vote('Retro')">Retro</button>
-<button onclick="vote('Mulatós')">Mulatós</button>
-<p id="voteRes"></p>
-</div>
-
-<div class="box">
-<h2>🔥 Napi szavazás</h2>
-<p id="dailyQ"></p>
-<div id="dailyBtns"></div>
-<p id="dailyRes"></p>
-</div>
-
-<div class="box">
-<h2>📅 Tematika</h2>
-<div id="program"></div>
-</div>
-
-<div class="box">
-<h2>📩 Kapcsolat</h2>
-<p class="small">
-Üzenet és zenekérés:  
-</p>
-
-<a href="mailto:kohegyim44@gmail.com?subject=Rádió üzenet"
-style="color:#00ccff; font-size:18px;">
-📧 Küldés emailben
-</a>
+<h2>🎵 Zenekérés</h2>
+<input id="song"><br>
+<button onclick="send('song')">Kérés</button>
 </div>
 
 <script>
 
-// FIX SZAVAZÁS
-let votes={Pop:0,Retro:0,Mulatós:0};
-
-function vote(v){
-  votes[v]++;
-  document.getElementById("voteRes").innerText =
-    `Pop:${votes.Pop} | Retro:${votes.Retro} | Mulatós:${votes.Mulatós}`;
-}
-
-// NAPI SZAVAZÁS
-let daily = {
-  q:"Milyen legyen a mai hangulat?",
-  options:["Bulizós","Lassú"]
-};
-
-document.getElementById("dailyQ").innerText = daily.q;
-
-let btns="";
-daily.options.forEach(o=>{
-  btns += `<button onclick="dailyVote('${o}')">${o}</button>`;
-});
-document.getElementById("dailyBtns").innerHTML = btns;
-
-let dVotes={};
-
-function dailyVote(v){
-  dVotes[v]=(dVotes[v]||0)+1;
-  document.getElementById("dailyRes").innerText =
-    JSON.stringify(dVotes);
-}
-
-// TEMATIKA
-let program = [
-"13:00 - 14:00 Hazai slágerek",
-"14:00 - 15:00 Üzenetek beolvasása",
-"15:00 - 16:00 Kívánságműsor"
-];
-
-document.getElementById("program").innerHTML = program.join("<br>");
-
-</script>
 const API = "https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
 
-function sendMessage(){
+function send(type){
+  let text = type==="message"
+    ? document.getElementById("msg").value
+    : document.getElementById("song").value;
+
   fetch(API,{
     method:"POST",
     body: JSON.stringify({
-      type:"message",
-      text: document.getElementById("msg").value
+      type,
+      text
     })
   });
+
   alert("Elküldve!");
 }
 
-function requestSong(){
-  fetch(API,{
-    method:"POST",
-    body: JSON.stringify({
-      type:"song",
-      text: document.getElementById("song").value
-    })
-  });
-  alert("Elküldve!");
-}
 </script>
+
 </body>
 </html>
