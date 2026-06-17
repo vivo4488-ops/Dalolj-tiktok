@@ -8,31 +8,78 @@
 body{
 margin:0;
 font-family:Arial;
-background:#0b1230;
 color:white;
 text-align:center;
+background: linear-gradient(-45deg,#0a1b3d,#0b2a6f,#000,#001b3a);
+background-size:400% 400%;
+animation:bg 10s ease infinite;
+overflow-x:hidden;
 }
 
+@keyframes bg{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+h1{margin-top:20px;}
+
 section{
-margin:20px auto;
+margin:15px auto;
 width:90%;
 max-width:700px;
 padding:15px;
-background:rgba(255,255,255,0.05);
+background:rgba(255,255,255,0.06);
+border-radius:12px;
+backdrop-filter: blur(8px);
+}
+
+/* LIVE */
+#live{
+padding:15px;
+margin:10px;
 border-radius:10px;
+background:#333;
+font-size:18px;
+}
+
+.live{
+background:red;
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{box-shadow:0 0 5px red;}
+100%{box-shadow:0 0 20px red;}
+}
+
+/* wave */
+.wave{
+height:40px;
+margin:10px 0;
+background: repeating-linear-gradient(
+90deg,
+#00c6ff,
+#0072ff 10px,
+transparent 10px,
+transparent 20px
+);
+animation:waveMove 1s linear infinite;
+}
+
+@keyframes waveMove{
+0%{background-position:0;}
+100%{background-position:100px;}
 }
 
 button{
 padding:10px;
 margin:5px;
 cursor:pointer;
-}
-
-#live{
-padding:15px;
-background:red;
-border-radius:10px;
-margin:10px;
+border:none;
+border-radius:8px;
+background:#00aaff;
+color:white;
 }
 
 </style>
@@ -42,29 +89,82 @@ margin:10px;
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="live">🔴 ON AIR (teszt)</div>
+<div id="live">🔴 ON AIR / OFF AIR</div>
+<div class="wave"></div>
 
 <section>
 <h2>📢 Bemutatkozás</h2>
 <p>
-Ez a TikTok Rádió Lacival oldal 🎧<br>
-Zenék, szavazások és élő műsor.
+A <b>TikTok Rádió Lacival</b> egy élő TikTok rádió 🎙️<br><br>
+
+📌 Itt élő adások mennek TikTok LIVE-on keresztül<br>
+🎵 Zenéket kérhetsz a chatben vagy az oldalon<br>
+💌 Küldhetsz szívküldi üzeneteket szeretteidnek<br>
+📊 Napi változó szavazásokon vehetsz részt<br>
+🔥 Minden nap más tematika és hangulat<br><br>
+
+Ez az oldal az élő adás kiegészítő felülete.
 </p>
 </section>
 
 <section>
-<h2>📊 Szavazás</h2>
-<button onclick="alert('Igen')">Igen</button>
-<button onclick="alert('Nem')">Nem</button>
-<button onclick="alert('Van jövője')">Van jövője</button>
+<h2>🎵 Zenei hullám</h2>
+<div class="wave"></div>
 </section>
 
 <section>
-<h2>💬 Üzenet (teszt)</h2>
-<input placeholder="Neved"><br>
-<textarea placeholder="Üzenet"></textarea><br>
-<button>Küldés (teszt)</button>
+<h2>📊 Napi szavazás</h2>
+<p id="dailyQ"></p>
+<button onclick="vote('a')">A</button>
+<button onclick="vote('b')">B</button>
+<button onclick="vote('c')">C</button>
+<p id="result"></p>
 </section>
+
+<section>
+<h2>📞 Elérhetőség</h2>
+<p>
+Reklám / kapcsolat: <b>radio@tiktok.hu</b><br>
+TikTok LIVE: <b>@tiktokradio_lacival</b>
+</p>
+</section>
+
+<script>
+
+/* LIVE (demo toggle) */
+let live = true;
+
+function setLive(){
+let el = document.getElementById("live");
+if(live){
+el.innerHTML="🔴 ÉLŐ ADÁS A TIKTOKON";
+el.classList.add("live");
+}else{
+el.innerHTML="⚫ NINCS ÉLŐ ADÁS";
+}
+}
+setLive();
+
+/* napi kérdés */
+const questions = [
+"Kérsz ma több zenét?",
+"Melyik hangulat legyen ma?",
+"Tetszik az élő rádió?",
+"Melyik stílus menjen ma?"
+];
+
+let today = new Date().getDate();
+let q = questions[today % questions.length];
+
+document.getElementById("dailyQ").innerText = q;
+
+/* szavazás */
+function vote(x){
+localStorage.setItem("vote_"+today, x);
+document.getElementById("result").innerText="Szavazat mentve: "+x;
+}
+
+</script>
 
 </body>
 </html>
