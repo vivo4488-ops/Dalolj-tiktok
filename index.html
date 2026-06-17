@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió</title>
+<title>TikTok Rádió Lacival</title>
 
 <style>
 body {
@@ -11,14 +11,40 @@ body {
   color:white;
   text-align:center;
   background: linear-gradient(270deg, #001f4d, #0033cc, #001f4d);
-  background-size: 300% 300%;
-  animation: bg 25s ease infinite;
+  background-size: 400% 400%;
+  animation: bg 20s ease infinite;
 }
 
+/* háttér animáció */
 @keyframes bg {
   0%{background-position:0%}
   50%{background-position:100%}
   100%{background-position:0%}
+}
+
+/* hullám */
+.wave {
+  display:flex;
+  justify-content:center;
+  margin:20px;
+}
+
+.bar {
+  width:5px;
+  height:20px;
+  margin:3px;
+  background:#00ccff;
+  animation: wave 1s infinite ease-in-out;
+}
+
+.bar:nth-child(2){animation-delay:0.1s;}
+.bar:nth-child(3){animation-delay:0.2s;}
+.bar:nth-child(4){animation-delay:0.3s;}
+.bar:nth-child(5){animation-delay:0.4s;}
+
+@keyframes wave {
+  0%,100%{height:10px;}
+  50%{height:40px;}
 }
 
 .box {
@@ -28,21 +54,11 @@ body {
   border-radius:15px;
 }
 
-/* ON AIR */
 #onair {
   font-size:50px;
   margin:20px;
   color:red;
   text-shadow:0 0 20px red;
-  cursor:pointer;
-}
-
-input, textarea {
-  width:80%;
-  padding:10px;
-  margin:10px;
-  border-radius:10px;
-  border:none;
 }
 
 button {
@@ -64,22 +80,29 @@ button {
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="onair" onclick="toggleAir()">🔴 ON AIR</div>
+<div id="onair">🔴 ON AIR</div>
+
+<div class="wave">
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
 
 <div class="box">
-<h2>📻 Miről szól a rádió?</h2>
+<h2>📻 A rádióról</h2>
 <p>
-Ez egy interaktív TikTok rádió, ahol a hallgatók is részt vesznek a műsorban.
-Küldhetsz üzenetet szeretteidnek, kérhetsz zenét a kívánságműsorhoz,
-és szavazhatsz, hogy milyen hangulat legyen az adásban.
+Ez egy élő TikTok rádió, ahol a hallgatók is alakítják a műsort.
+Zenék, hangulat, szavazások és közösségi élmény egyben.
+</p>
+<p>
+A szavazásokkal ti döntitek el, milyen legyen a műsor hangulata.
 </p>
 </div>
 
 <div class="box">
 <h2>🗳️ Fix szavazás</h2>
-<p class="small">
-Ez a szavazás folyamatosan fut. Azt mutatja meg, hogy általában milyen zenei stílust szerettek a hallgatók.
-</p>
 <button onclick="vote('Pop')">Pop</button>
 <button onclick="vote('Retro')">Retro</button>
 <button onclick="vote('Mulatós')">Mulatós</button>
@@ -89,60 +112,41 @@ Ez a szavazás folyamatosan fut. Azt mutatja meg, hogy általában milyen zenei 
 <div class="box">
 <h2>🔥 Napi szavazás</h2>
 <p id="dailyQ"></p>
-<p class="small">
-Ez a szavazás minden nap változik, és az aktuális műsor hangulatát befolyásolja.
-</p>
 <div id="dailyBtns"></div>
 <p id="dailyRes"></p>
 </div>
 
 <div class="box">
-<h2>📅 Mai tematika</h2>
+<h2>📅 Tematika</h2>
 <div id="program"></div>
 </div>
 
 <div class="box">
-<h2>📩 Üzenet küldése</h2>
+<h2>📩 Kapcsolat</h2>
 <p class="small">
-Ide névvel írhatsz üzenetet annak, akit szeretsz vagy kedvelsz.
-Az üzenetek beolvasásra kerülnek az adásban.
+Üzenet és zenekérés:  
 </p>
-<textarea id="msg" placeholder="Pl: Szeretlek Anna! - Péter"></textarea><br>
-<button onclick="sendMessage()">Küldés</button>
-</div>
 
-<div class="box">
-<h2>🎵 Zenekérés</h2>
-<p class="small">
-Ide csak zenét írj! Ezek a kívánságműsorban kerülnek lejátszásra.
-</p>
-<input id="song" placeholder="Előadó - szám"><br>
-<button onclick="requestSong()">Kérés</button>
-</div>
-
-<div class="box">
-<h2>📞 Kapcsolat</h2>
-<p>kohegyim44@gmail.com</p>
+<a href="mailto:kohegyim44@gmail.com?subject=Rádió üzenet"
+style="color:#00ccff; font-size:18px;">
+📧 Küldés emailben
+</a>
 </div>
 
 <script>
-// ON AIR
-function toggleAir(){
-  let el=document.getElementById("onair");
-  el.innerText = el.innerText.includes("ON") ? "⚫ OFF AIR" : "🔴 ON AIR";
-}
 
 // FIX SZAVAZÁS
 let votes={Pop:0,Retro:0,Mulatós:0};
+
 function vote(v){
   votes[v]++;
   document.getElementById("voteRes").innerText =
     `Pop:${votes.Pop} | Retro:${votes.Retro} | Mulatós:${votes.Mulatós}`;
 }
 
-// NAPI SZAVAZÁS BETÖLTÉS
-let daily = JSON.parse(localStorage.getItem("daily")) || {
-  q:"Milyen zene menjen?",
+// NAPI SZAVAZÁS
+let daily = {
+  q:"Milyen legyen a mai hangulat?",
   options:["Bulizós","Lassú"]
 };
 
@@ -155,35 +159,22 @@ daily.options.forEach(o=>{
 document.getElementById("dailyBtns").innerHTML = btns;
 
 let dVotes={};
+
 function dailyVote(v){
   dVotes[v]=(dVotes[v]||0)+1;
-  document.getElementById("dailyRes").innerText = JSON.stringify(dVotes);
+  document.getElementById("dailyRes").innerText =
+    JSON.stringify(dVotes);
 }
 
 // TEMATIKA
-let program = JSON.parse(localStorage.getItem("program")) || [
+let program = [
 "13:00 - 14:00 Hazai slágerek",
-"14:00 - 15:00 Üzenetek",
+"14:00 - 15:00 Üzenetek beolvasása",
 "15:00 - 16:00 Kívánságműsor"
 ];
 
 document.getElementById("program").innerHTML = program.join("<br>");
 
-// ÜZENET
-function sendMessage(){
-  let m=JSON.parse(localStorage.getItem("m")||"[]");
-  m.push(document.getElementById("msg").value);
-  localStorage.setItem("m",JSON.stringify(m));
-  alert("Elküldve");
-}
-
-// ZENE
-function requestSong(){
-  let s=JSON.parse(localStorage.getItem("s")||"[]");
-  s.push(document.getElementById("song").value);
-  localStorage.setItem("s",JSON.stringify(s));
-  alert("Elküldve");
-}
 </script>
 
 </body>
