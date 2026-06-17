@@ -4,7 +4,7 @@ function toggleLive() {
     alert(live ? "LIVE kikapcsolva" : "LIVE bekapcsolva");
 }
 
-/* 📅 MŰSOR HOZZÁADÁS (tól–ig) */
+/* 📅 HOZZÁADÁS */
 function addProgram() {
     let from = document.getElementById("from").value;
     let to = document.getElementById("to").value;
@@ -21,18 +21,38 @@ function addProgram() {
     render();
 }
 
-/* 📋 LISTA MEGJELENÍTÉS */
+/* 📋 MEGJELENÍTÉS + TÖRLÉS */
 function render() {
     let list = document.getElementById("programList");
     list.innerHTML = "";
 
     let program = JSON.parse(localStorage.getItem("program")) || [];
 
-    program.forEach(p => {
+    program.forEach((p, index) => {
         let li = document.createElement("li");
-        li.textContent = `${p.from} - ${p.to} → ${p.desc}`;
+        li.innerHTML = `
+            ${p.from} - ${p.to} → ${p.desc}
+            <button onclick="deleteProgram(${index})">❌</button>
+        `;
         list.appendChild(li);
     });
+}
+
+/* ❌ TÖRLÉS */
+function deleteProgram(index) {
+    let program = JSON.parse(localStorage.getItem("program")) || [];
+
+    program.splice(index, 1);
+
+    localStorage.setItem("program", JSON.stringify(program));
+
+    render();
+}
+
+/* 🧹 ÖSSZES TÖRLÉSE (OPCIONÁLIS) */
+function clearProgram() {
+    localStorage.removeItem("program");
+    render();
 }
 
 /* 📊 SZAVAZÁS TÉMA */
