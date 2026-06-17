@@ -12,13 +12,13 @@
     <p>Élő műsor • Közösség • Zene • Szavazás</p>
 </header>
 
-<!-- 📌 LEÍRÁS -->
+<!-- 📻 LEÍRÁS -->
 <section class="card">
-    <h2>📻 Mi ez a TikTok Rádió?</h2>
+    <h2>📻 Mi ez a rádió?</h2>
     <p>
-        Ez egy közösségi rádió, ahol TikTok LIVE adásokhoz kapcsolódó zenék, tematikus műsorok és szavazások zajlanak.
-        Hallhatsz 90-es és 2000-es évek zenéit, szívküldi üzeneteket, valamint a hallgatók által kért dalokat.
-        A műsor folyamatosan változik, a közösség pedig szavazásokkal befolyásolhatja a tartalmat.
+        Ez egy online TikTok rádió közösségi műsorral. Hallgathatsz tematikus zenéket,
+        90-es és 2000-es évek slágereit, szívküldi üzeneteket és a hallgatók által kért dalokat.
+        A műsort szavazások befolyásolják, így a közösség alakítja a rádiót.
     </p>
 </section>
 
@@ -26,7 +26,16 @@
 <section class="card" id="liveCard">
     <h2>🔴 Élő adás</h2>
 
-    <p id="status" class="live-off">⚫ Nincs élő adás jelenleg</p>
+    <p id="status">⚫ Nincs élő adás jelenleg</p>
+
+    <!-- 🎧 hanghullám -->
+    <div id="wave" class="wave-container wave-off">
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+        <div class="wave-bar"></div>
+    </div>
 
     <a href="https://tiktok.com" target="_blank" class="live-btn">
         🎥 Csatlakozás a TikTok LIVE-hoz
