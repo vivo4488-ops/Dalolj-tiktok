@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>ADMIN</title>
+<title>Admin</title>
 
 <style>
 body{
@@ -14,9 +14,14 @@ body{
 
 .box{
   background:#222;
-  margin:15px 0;
   padding:15px;
+  margin:10px 0;
   border-radius:10px;
+}
+
+input{
+  width:80%;
+  padding:10px;
 }
 
 button{
@@ -25,12 +30,6 @@ button{
   background:#00ccff;
   border:none;
   border-radius:8px;
-  cursor:pointer;
-}
-
-input{
-  width:80%;
-  padding:10px;
 }
 </style>
 </head>
@@ -40,69 +39,48 @@ input{
 <h1>🎛 ADMIN PANEL</h1>
 
 <div class="box">
-<h2>🔴 ON AIR</h2>
-<button onclick="set('onair')">ON</button>
-<button onclick="set('offair')">OFF</button>
-</div>
-
-<div class="box">
-<h2>📅 Tematika szerkesztés</h2>
+<h2>📅 Tematika</h2>
 <input id="theme"><br>
 <button onclick="saveTheme()">Mentés</button>
 </div>
 
 <div class="box">
-<h2>🗳 NAPI SZAVAZÁS KÉRDÉS</h2>
-<input id="dq"><br>
+<h2>🎵 Zenei stílus</h2>
+<input id="style"><br>
+<button onclick="saveStyle()">Mentés</button>
+</div>
+
+<div class="box">
+<h2>🗳 Napi szavazás kérdés</h2>
+<input id="dailyQ"><br>
 <button onclick="saveDaily()">Mentés</button>
 </div>
 
 <div class="box">
-<h2>📩 Üzenetek + 🎵 Zenék</h2>
-<div id="log"></div>
+<h2>🔄 Szavazás nullázása</h2>
+<button onclick="reset()">RESET</button>
 </div>
-
-<button onclick="load()">Frissítés</button>
 
 <script>
 
-const API="https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
-
-function set(v){
-  fetch(API,{
-    method:"POST",
-    body:JSON.stringify({type:"status",text:v})
-  });
+function saveTheme(){
+  localStorage.setItem("theme",document.getElementById("theme").value);
 }
 
-function saveTheme(){
-  fetch(API,{
-    method:"POST",
-    body:JSON.stringify({type:"theme",text:theme.value})
-  });
+function saveStyle(){
+  localStorage.setItem("style",document.getElementById("style").value);
 }
 
 function saveDaily(){
-  fetch(API,{
-    method:"POST",
-    body:JSON.stringify({type:"daily_question",text:dq.value})
-  });
+  localStorage.setItem("dailyQ",document.getElementById("dailyQ").value);
 }
 
-function load(){
-  fetch(API)
-  .then(r=>r.json())
-  .then(d=>{
-    let html="";
-    d.forEach(r=>{
-      if(r[0]==="message") html+="💬 "+r[1]+"<br>";
-      if(r[0]==="song") html+="🎵 "+r[1]+"<br>";
-    });
-    log.innerHTML=html;
-  });
+function reset(){
+  localStorage.setItem("fixedA",0);
+  localStorage.setItem("fixedB",0);
+  localStorage.setItem("dailyA",0);
+  localStorage.setItem("dailyB",0);
 }
-
-load();
 
 </script>
 
