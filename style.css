@@ -98,3 +98,40 @@ button:hover {
     margin: 10px 0;
     border-radius: 10px;
 }
+/* 🎧 HANGHULLÁM KONTAINER */
+.wave-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    height: 40px;
+    margin-top: 10px;
+}
+
+/* egy oszlop */
+.wave-bar {
+    width: 5px;
+    height: 10px;
+    background: #ff2e2e;
+    border-radius: 5px;
+    animation: wave 1s infinite ease-in-out;
+    box-shadow: 0 0 10px #ff2e2e;
+}
+
+/* eltérő ritmus */
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { animation-delay: 0.4s; }
+
+/* hullám mozgás */
+@keyframes wave {
+    0%   { height: 10px; }
+    50%  { height: 35px; }
+    100% { height: 10px; }
+}
+
+/* OFF állapotban elrejtjük */
+.wave-off {
+    display: none;
+}
