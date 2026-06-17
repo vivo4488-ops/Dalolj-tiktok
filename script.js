@@ -9,7 +9,10 @@ let dailyVotes = JSON.parse(localStorage.getItem("dailyVotes")) || [0,0,0];
 
 let question = localStorage.getItem("dailyQuestion") || "Nincs napi kérdés";
 
-let options = JSON.parse(localStorage.getItem("dailyOptions")) || ["Opció 1","Opció 2","Opció 3"];
+let options = JSON.parse(localStorage.getItem("dailyOptions")) || ["A","B","C"];
+
+/* 📩 ELÉRHETŐSÉG */
+let contact = localStorage.getItem("contact") || "radioradio@example.com";
 
 /* ---------------- FIX SZAVAZÁS ---------------- */
 
@@ -65,7 +68,14 @@ function renderProgram() {
     document.getElementById("programListPublic").innerHTML = html;
 }
 
+/* 📩 ELÉRHETŐSÉG */
+function renderContact() {
+    document.getElementById("contactInfo").innerText = "E-mail: " + contact;
+    document.getElementById("contactLink").href = "mailto:" + contact;
+}
+
 /* INIT */
 renderFixed();
 renderDaily();
 renderProgram();
+renderContact();
