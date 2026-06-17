@@ -4,57 +4,72 @@
 <meta charset="UTF-8">
 <title>TikTok Rádió Lacival</title>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
 <style>
-body {
-    background: linear-gradient(135deg, #0a0f2c, #1a2a6c);
-    color: white;
-    font-family: Arial;
-    text-align: center;
+body{
+    margin:0;
+    font-family:Arial;
+    background: linear-gradient(135deg,#0a0f2c,#1a2a6c);
+    color:white;
+    text-align:center;
 }
 
-/* LIVE */
-#liveStatus {
-    font-size: 26px;
-    padding: 15px;
-    margin: 20px;
-    border-radius: 10px;
+h1{margin-top:20px;}
+
+#liveStatus{
+    margin:20px auto;
+    padding:15px;
+    width:80%;
+    border-radius:10px;
+    font-size:22px;
 }
 
-.live {
-    background: red;
-    animation: glow 1s infinite alternate;
-}
-.offline { background: gray; }
-
-@keyframes glow {
-    from { box-shadow: 0 0 10px red; }
-    to { box-shadow: 0 0 30px red; }
+.live{
+    background:red;
+    animation:glow 1s infinite alternate;
 }
 
-/* hullám */
-.wave {
-    height: 40px;
-    background: linear-gradient(90deg, red, transparent);
-    animation: waveMove 2s infinite linear;
-}
-@keyframes waveMove {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(100%); }
+.offline{background:#333;}
+
+@keyframes glow{
+    from{box-shadow:0 0 10px red;}
+    to{box-shadow:0 0 30px red;}
 }
 
-section { margin-top: 40px; max-width:600px; margin-left:auto; margin-right:auto;}
-
-input, textarea {
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    border: none;
-    width: 80%;
+.wave{
+    height:40px;
+    background:linear-gradient(90deg,red,transparent);
+    animation:wave 2s infinite linear;
 }
 
-button {
-    padding: 10px 20px;
-    cursor: pointer;
+@keyframes wave{
+    from{transform:translateX(-100%);}
+    to{transform:translateX(100%);}
+}
+
+section{
+    margin:40px auto;
+    width:85%;
+    max-width:700px;
+    background:rgba(255,255,255,0.05);
+    padding:20px;
+    border-radius:10px;
+}
+
+input,textarea{
+    width:90%;
+    padding:10px;
+    margin:5px;
+    border-radius:5px;
+    border:none;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    cursor:pointer;
 }
 </style>
 </head>
@@ -68,150 +83,152 @@ button {
 
 <!-- ISMERTETŐ -->
 <section>
-<h2>ℹ️ Miről szól?</h2>
+<h2>ℹ️ Miről szól a rádió?</h2>
 <p>
 Üdv a <b>TikTok Rádió Lacival</b> oldalán! 🎶<br><br>
 
-Ez egy interaktív online rádió, ahol:<br>
-👉 Te is beleszólhatsz, mi szóljon<br>
-👉 Üzenetet küldhetsz élő adásba<br>
-👉 Kérhetsz zenét barátodnak, párodnak 💖<br>
-👉 Részt vehetsz szavazásokban<br><br>
+Ez egy élő, interaktív online rádió:<br>
+✔ zenét kérhetsz<br>
+✔ üzenetet küldhetsz (akár szerelmednek 💖)<br>
+✔ részt vehetsz szavazásokban<br>
+✔ élő TikTok adásra csatlakozhatsz<br><br>
 
-🎧 Ha LIVE van, csatlakozz TikTokon!<br>
-💬 Küldj üzenetet – akár névvel, akár anonim<br>
-📀 Kérj zenét, amit lejátszunk adásban!
+💬 A küldött üzenetek és zenekérések beolvashatók az adásban!
 </p>
 </section>
 
 <!-- TEMATIKA -->
 <section>
 <h2>📅 Műsor tematika</h2>
-<ul id="schedule"></ul>
+<div id="schedule"></div>
 </section>
 
 <!-- SZAVAZÁS -->
 <section>
-<h2>📊 Tetszik a TikTok rádió?</h2>
+<h2>📊 Tetszik a rádió?</h2>
 <button onclick="vote('igen')">Igen</button>
 <button onclick="vote('nem')">Nem</button>
 <button onclick="vote('jovo')">Van jövője</button>
 <p id="voteResult"></p>
 </section>
 
-<!-- NAPI -->
-<section>
-<h2>❓ Napi kérdés</h2>
-<p id="dailyQuestion"></p>
-<div id="dailyOptions"></div>
-</section>
-
 <!-- ÜZENET -->
 <section>
 <h2>💬 Üzenet / Zenekérés</h2>
 
-<p>
-Írj üzenetet, amit akár beolvashatunk adásban! 🎤<br>
-Írhatsz például:<br>
-👉 zenekérést<br>
-👉 üzenetet barátnak / barátnőnek 💕<br>
-👉 shoutoutot<br>
-</p>
+<input id="name" placeholder="Neved">
+<textarea id="msg" placeholder="Üzenet vagy zenekérés"></textarea>
+<button onclick="sendMsg()">Küldés</button>
 
-<input id="msgName" placeholder="Neved (vagy becenév)">
-<textarea id="msgText" placeholder="Üzenet vagy zenekérés..."></textarea>
-<button onclick="sendMessage()">Küldés</button>
-
-<p id="msgStatus"></p>
+<p id="status"></p>
 </section>
 
-<!-- KONTAKT -->
+<!-- ÜZENETEK LISTA -->
 <section>
-<h2>📢 Reklám / Kapcsolat</h2>
-<p id="contact"></p>
+<h2>📩 Beérkezett üzenetek</h2>
+<div id="messages"></div>
 </section>
 
 <script>
-/* LIVE */
-function loadLive() {
-    const live = localStorage.getItem("radioLive");
-    const el = document.getElementById("liveStatus");
 
-    if (live === "true") {
-        el.innerText = "🔴 ÉLŐ ADÁS MOST!";
-        el.className = "live";
-    } else {
-        el.innerText = "⚫ NINCS ÉLŐ ADÁS";
-        el.className = "offline";
+/* 🔥 FIREBASE IDE KERÜL */
+const firebaseConfig = {
+  apiKey: "IDE",
+  authDomain: "IDE",
+  databaseURL: "IDE",
+  projectId: "IDE",
+  storageBucket: "IDE",
+  messagingSenderId: "IDE",
+  appId: "IDE"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* LIVE */
+function loadLive(){
+    let live = localStorage.getItem("radioLive");
+    let el = document.getElementById("liveStatus");
+
+    if(live==="true"){
+        el.innerText="🔴 ÉLŐ ADÁS MOST!";
+        el.className="live";
+    }else{
+        el.innerText="⚫ NINCS ÉLŐ ADÁS";
+        el.className="offline";
     }
 }
 
-/* TEMATIKA */
-function loadSchedule() {
-    let data = JSON.parse(localStorage.getItem("schedule")) || [];
-    const ul = document.getElementById("schedule");
-    ul.innerHTML = "";
-
-    data.forEach(item => {
-        let li = document.createElement("li");
-        li.innerText = `${item.from} - ${item.to} | ${item.name}`;
-        ul.appendChild(li);
-    });
-}
-
 /* SZAVAZÁS */
-function vote(v) {
-    let votes = JSON.parse(localStorage.getItem("votes")) || {igen:0,nem:0,jovo:0};
-    votes[v]++;
-    localStorage.setItem("votes", JSON.stringify(votes));
+function vote(v){
+    let data = JSON.parse(localStorage.getItem("votes"))||{igen:0,nem:0,jovo:0};
+    data[v]++;
+    localStorage.setItem("votes",JSON.stringify(data));
 
     document.getElementById("voteResult").innerText =
-        `Igen: ${votes.igen} | Nem: ${votes.nem} | Jövő: ${votes.jovo}`;
+    `Igen: ${data.igen} | Nem: ${data.nem} | Jövő: ${data.jovo}`;
 }
 
-/* NAPI */
-function loadDaily() {
-    const q = localStorage.getItem("dailyQ");
-    const opts = JSON.parse(localStorage.getItem("dailyOpts")) || [];
+/* ÜZENET KÜLDÉS (FIREBASE) */
+function sendMsg(){
+    let n=document.getElementById("name").value;
+    let m=document.getElementById("msg").value;
 
-    document.getElementById("dailyQuestion").innerText = q || "Nincs kérdés";
+    if(!n||!m){
+        status.innerText="Tölts ki mindent!";
+        return;
+    }
 
-    const box = document.getElementById("dailyOptions");
-    box.innerHTML = "";
+    db.ref("messages").push({
+        name:n,
+        msg:m,
+        time:new Date().toLocaleString()
+    });
 
-    opts.forEach(o => {
-        let b = document.createElement("button");
-        b.innerText = o;
-        box.appendChild(b);
+    status.innerText="Elküldve 🎧";
+    name.value="";
+    msg.value="";
+}
+
+/* ÜZENETEK BETÖLTÉSE */
+db.ref("messages").on("value",snap=>{
+    let data=snap.val();
+    let box=document.getElementById("messages");
+    box.innerHTML="";
+
+    for(let id in data){
+        let m=data[id];
+
+        let div=document.createElement("div");
+        div.style.border="1px solid gray";
+        div.style.margin="5px";
+        div.style.padding="5px";
+
+        div.innerHTML=`<b>${m.name}</b>: ${m.msg}`;
+
+        box.appendChild(div);
+    }
+});
+
+/* TEMATIKA DEMO */
+function loadSchedule(){
+    let demo=[
+        "13:00 Magyar retro zenék",
+        "14:00 Szívküldi üzenetek",
+        "16:00 Kért zenék"
+    ];
+
+    let box=document.getElementById("schedule");
+    demo.forEach(x=>{
+        let p=document.createElement("p");
+        p.innerText=x;
+        box.appendChild(p);
     });
 }
 
-/* ÜZENET */
-function sendMessage() {
-    let name = msgName.value;
-    let text = msgText.value;
-
-    if (!name || !text) return msgStatus.innerText="Tölts ki mindent!";
-
-    let m = JSON.parse(localStorage.getItem("msgs")) || [];
-    m.push({name,text,time:new Date().toLocaleString()});
-    localStorage.setItem("msgs", JSON.stringify(m));
-
-    msgStatus.innerText="Elküldve! 🎧";
-    msgName.value=""; msgText.value="";
-}
-
-/* KONTAKT */
-function loadContact() {
-    document.getElementById("contact").innerText =
-        localStorage.getItem("contact") || "Nincs megadva";
-}
-
-/* INIT */
 loadLive();
 loadSchedule();
-loadDaily();
-loadContact();
+
 </script>
 
 </body>
