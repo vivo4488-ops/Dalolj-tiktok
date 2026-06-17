@@ -176,6 +176,29 @@ let program = [
 document.getElementById("program").innerHTML = program.join("<br>");
 
 </script>
+const API = "https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
 
+function sendMessage(){
+  fetch(API,{
+    method:"POST",
+    body: JSON.stringify({
+      type:"message",
+      text: document.getElementById("msg").value
+    })
+  });
+  alert("Elküldve!");
+}
+
+function requestSong(){
+  fetch(API,{
+    method:"POST",
+    body: JSON.stringify({
+      type:"song",
+      text: document.getElementById("song").value
+    })
+  });
+  alert("Elküldve!");
+}
+</script>
 </body>
 </html>
