@@ -10,36 +10,50 @@ margin:0;
 font-family:Arial;
 color:white;
 text-align:center;
-background: radial-gradient(circle,#0a1a3a,#000);
+background: linear-gradient(120deg,#001b4d,#003cff,#000);
+background-size:400% 400%;
+animation:bg 10s infinite alternate;
+overflow-x:hidden;
+}
+
+@keyframes bg{
+0%{background-position:0%;}
+100%{background-position:100%;}
 }
 
 h1{margin-top:15px;}
 
 #live{
-font-size:28px;
+font-size:30px;
 margin:15px auto;
 padding:20px;
 width:80%;
 border-radius:15px;
+transition:0.3s;
+}
+
+.on{
+background:red;
+box-shadow:0 0 30px red;
+animation:pulse 1s infinite;
+}
+
+.off{
 background:#222;
 }
 
-.onair{
-background:red;
-box-shadow:0 0 25px red;
-}
-
-.offair{
-background:#333;
+@keyframes pulse{
+50%{transform:scale(1.03);}
 }
 
 section{
 margin:15px auto;
 width:90%;
-max-width:750px;
+max-width:800px;
 padding:15px;
-background:rgba(255,255,255,0.06);
+background:rgba(255,255,255,0.07);
 border-radius:12px;
+backdrop-filter: blur(6px);
 }
 
 button{
@@ -74,102 +88,138 @@ text-align:left;
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="live" class="offair">⚫ OFF AIR</div>
+<div id="live" class="off">⚫ OFF AIR</div>
 
 <!-- BEMUTATKOZÁS -->
 <section>
-<h2>📢 Bemutatkozás</h2>
+<h2>📢 A rádióról</h2>
 <p>
-TikTok Rádió Lacival 🎙️ – közösségi rádió, ahol a hallgatók is szerepet kapnak.
+<b>TikTok Rádió Lacival</b> egy online közösségi rádió 🎙️ ahol a hallgatók aktív résztvevők.<br><br>
+
+🔵 Élő TikTok LIVE adások<br>
+🎵 zenék, kívánságok, TikTok trendek<br>
+💌 anonim üzenetek szeretteknek (beolvasás adásban)<br>
+📊 szavazások (közönség dönt)<br>
+📅 tematikus műsorblokkok<br>
+📢 reklám és üzenetküldés lehetőség
 </p>
 </section>
 
-<!-- ÜZENETKÜLDÉS -->
+<!-- FIX SZAVAZÁS -->
 <section>
-<h2>💬 Üzenetküldés</h2>
+<h2>📊 Fix szavazás</h2>
+<p>Tetszik a rádió?</p>
+<button onclick="vote('igen')">Igen</button>
+<button onclick="vote('nem')">Nem</button>
+<button onclick="vote('fejlodik')">Fejlődik</button>
+<p id="fixedResult"></p>
+</section>
 
-<input id="name" placeholder="Neved"><br>
-<textarea id="msg" placeholder="Üzeneted"></textarea><br>
+<!-- NAPI SZAVAZÁS -->
+<section>
+<h2>📅 Napi szavazás</h2>
+<p id="dailyQ">Betöltés...</p>
+<button onclick="voteDaily('a')">A</button>
+<button onclick="voteDaily('b')">B</button>
+<button onclick="voteDaily('c')">C</button>
+</section>
 
+<!-- ÜZENET -->
+<section>
+<h2>💌 Üzenet (anonim)</h2>
+<input id="name" placeholder="Név (nem jelenik meg)"><br>
+<textarea id="msg" placeholder="Üzenet szerettednek"></textarea><br>
 <button onclick="sendMsg()">Küldés</button>
 </section>
 
-<!-- ÜZENETEK LISTÁJA -->
+<!-- ZENEKÉRÉS -->
 <section>
-<h2>📨 Beérkezett üzenetek</h2>
-<div id="messages"></div>
+<h2>🎵 Zenekérés (név nélkül)</h2>
+<input id="song" placeholder="Kért zene"><br>
+<button onclick="sendSong()">Küldés</button>
+</section>
+
+<!-- MŰSOR -->
+<section>
+<h2>📅 Tematikus műsor</h2>
+<div id="schedule"></div>
+</section>
+
+<!-- ELÉRHETŐSÉG -->
+<section>
+<h2>📞 Elérhetőség</h2>
+<p>
+📧 kohegyim44@gmail.com<br>
+📢 reklám / észrevétel ide jöhet
+</p>
 </section>
 
 <script>
 
 /* LIVE */
-let live=false;
-
 function updateLive(){
+let live=localStorage.getItem("live");
+
 let el=document.getElementById("live");
 
-if(live){
-el.innerHTML="🔴 ON AIR";
-el.className="onair";
+if(live==="on"){
+el.className="on";
+el.innerHTML="🔴 ON AIR LIVE";
 }else{
+el.className="off";
 el.innerHTML="⚫ OFF AIR";
-el.className="offair";
 }
 }
 updateLive();
 
-/* ÜZENET KÜLDÉS */
-function sendMsg(){
+/* FIX SZAVAZÁS */
+function vote(v){
+let d=JSON.parse(localStorage.getItem("fixed"))||{igen:0,nem:0,fejlodik:0};
+d[v]++;
+localStorage.setItem("fixed",JSON.stringify(d));
 
-let nameVal=document.getElementById("name").value;
-let msgVal=document.getElementById("msg").value;
-
-if(!nameVal || !msgVal){
-alert("Minden mezőt tölts ki!");
-return;
+document.getElementById("fixedResult").innerText=
+`Igen:${d.igen} Nem:${d.nem} Fejlődik:${d.fejlodik}`;
 }
 
-let msgs=JSON.parse(localStorage.getItem("messages"))||[];
+/* NAPI SZAVAZÁS */
+let today=new Date().getDate();
+let q=["Milyen legyen a hangulat?","Melyik zene?","Interaktív adás?"];
+
+document.getElementById("dailyQ").innerText=q[today%q.length];
+
+function voteDaily(v){
+localStorage.setItem("dailyVote",v);
+}
+
+/* ÜZENET */
+function sendMsg(){
+let msgs=JSON.parse(localStorage.getItem("msgs"))||[];
 
 msgs.push({
-name:nameVal,
-msg:msgVal,
+msg:document.getElementById("msg").value,
 time:new Date().toLocaleString()
 });
 
-localStorage.setItem("messages",JSON.stringify(msgs));
-
-document.getElementById("msg").value="";
-
-loadMessages();
-
-alert("Üzenet elküldve ✔");
+localStorage.setItem("msgs",JSON.stringify(msgs));
+alert("Elküldve ✔");
 }
 
-/* ÜZENETEK BETÖLTÉSE */
-function loadMessages(){
-
-let msgs=JSON.parse(localStorage.getItem("messages"))||[];
-let box=document.getElementById("messages");
-
-box.innerHTML="";
-
-if(msgs.length===0){
-box.innerHTML="Nincs még üzenet";
-return;
+/* ZENE */
+function sendSong(){
+let songs=JSON.parse(localStorage.getItem("songs"))||[];
+songs.push(document.getElementById("song").value);
+localStorage.setItem("songs",JSON.stringify(songs));
+alert("Kérés elküldve ✔");
 }
 
-msgs.reverse().forEach(m=>{
-box.innerHTML+=`
-<div class="box">
-<b>${m.name}</b> <small>${m.time}</small><br>
-${m.msg}
-</div>
-`;
+/* MŰSOR */
+let schedule=JSON.parse(localStorage.getItem("schedule"))||[];
+
+let box=document.getElementById("schedule");
+schedule.forEach(s=>{
+box.innerHTML+=`<div class="box">${s}</div>`;
 });
-}
-
-loadMessages();
 
 </script>
 
