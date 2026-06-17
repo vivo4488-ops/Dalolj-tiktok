@@ -3,37 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <title>ADMIN</title>
+
 <style>
-body{background:#111;color:white;font-family:Arial;padding:20px}
-.box{background:#222;padding:15px;margin:10px;border-radius:10px}
-button{padding:10px;margin:5px}
+body{
+  font-family:Arial;
+  background:#111;
+  color:white;
+  padding:20px;
+}
+
+.box{
+  background:#222;
+  margin:15px 0;
+  padding:15px;
+  border-radius:10px;
+}
+
+button{
+  padding:10px;
+  margin:5px;
+  background:#00ccff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+input{
+  width:80%;
+  padding:10px;
+}
 </style>
 </head>
 
 <body>
 
-<h1>🎛 ADMIN</h1>
+<h1>🎛 ADMIN PANEL</h1>
 
 <div class="box">
-<h2>ON AIR</h2>
+<h2>🔴 ON AIR</h2>
 <button onclick="set('onair')">ON</button>
 <button onclick="set('offair')">OFF</button>
 </div>
 
 <div class="box">
-<h2>Tematika</h2>
-<input id="theme" style="width:80%"><br>
+<h2>📅 Tematika</h2>
+<input id="theme"><br>
 <button onclick="saveTheme()">Mentés</button>
 </div>
 
 <div class="box">
-<h2>NAPI SZAVAZÁS KÉRDÉS</h2>
-<input id="q" style="width:80%"><br>
+<h2>🗳 NAPI SZAVAZÁS KÉRDÉS</h2>
+<input id="dq"><br>
 <button onclick="saveDaily()">Mentés</button>
 </div>
 
 <div class="box">
-<h2>Üzenetek / Zene</h2>
+<h2>📩 Üzenetek + 🎵 Zenék</h2>
 <div id="log"></div>
 </div>
 
@@ -52,11 +77,13 @@ function saveTheme(){
 }
 
 function saveDaily(){
-  fetch(API,{method:"POST",body:JSON.stringify({type:"daily_question",text:q.value})});
+  fetch(API,{method:"POST",body:JSON.stringify({type:"daily_question",text:dq.value})});
 }
 
 function load(){
-  fetch(API).then(r=>r.json()).then(d=>{
+  fetch(API)
+  .then(r=>r.json())
+  .then(d=>{
     let html="";
     d.forEach(r=>{
       if(r[0]==="message") html+="💬 "+r[1]+"<br>";
