@@ -5,81 +5,47 @@
 <title>TikTok Rádió Lacival</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-color:white;
-text-align:center;
-background: linear-gradient(120deg,#001b4d,#003cff,#000);
-background-size:400% 400%;
-animation:bg 10s infinite alternate;
-overflow-x:hidden;
+body {
+  margin:0;
+  font-family: Arial;
+  background: linear-gradient(270deg,#001f4d,#003366,#001f4d);
+  background-size: 600% 600%;
+  animation: bg 15s infinite;
+  color:white;
+  text-align:center;
 }
 
-@keyframes bg{
-0%{background-position:0%;}
-100%{background-position:100%;}
+@keyframes bg {
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
 }
 
-h1{margin-top:15px;}
+h1 {margin-top:20px;}
 
-#live{
-font-size:30px;
-margin:15px auto;
-padding:20px;
-width:80%;
-border-radius:15px;
-transition:0.3s;
+#onair {
+  font-size:40px;
+  margin:20px;
+  text-shadow:0 0 20px red;
 }
 
-.on{
-background:red;
-box-shadow:0 0 30px red;
-animation:pulse 1s infinite;
+.box {
+  background: rgba(255,255,255,0.05);
+  padding:15px;
+  margin:15px;
+  border-radius:15px;
 }
 
-.off{
-background:#222;
+input,button {
+  padding:10px;
+  margin:5px;
+  border-radius:10px;
+  border:none;
 }
-
-@keyframes pulse{
-50%{transform:scale(1.03);}
-}
-
-section{
-margin:15px auto;
-width:90%;
-max-width:800px;
-padding:15px;
-background:rgba(255,255,255,0.07);
-border-radius:12px;
-backdrop-filter: blur(6px);
-}
-
-button{
-padding:10px;
-margin:5px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:#00aaff;
-color:white;
-}
-
-input,textarea{
-width:90%;
-padding:8px;
-margin:5px;
-border-radius:6px;
-border:none;
-}
-
-.box{
-background:rgba(255,255,255,0.1);
-padding:8px;
-margin:5px;
-border-radius:8px;
-text-align:left;
+button {
+  background:#00ccff;
+  color:black;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -88,221 +54,97 @@ text-align:left;
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="live" class="off">⚫ OFF AIR</div>
+<div id="onair">Betöltés...</div>
 
-<!-- BEMUTATKOZÁS -->
-<section>
-<h2>📢 A rádióról</h2>
+<div class="box">
+<h3>📻 Bemutatkozás</h3>
 <p>
-<b>TikTok Rádió Lacival</b> egy online közösségi rádió 🎙️ ahol a hallgatók aktív résztvevők.<br><br>
-
-🔵 Élő TikTok LIVE adások<br>
-🎵 zenék, kívánságok, TikTok trendek<br>
-💌 anonim üzenetek szeretteknek (beolvasás adásban)<br>
-📊 szavazások (közönség dönt)<br>
-📅 tematikus műsorblokkok<br>
-📢 reklám és üzenetküldés lehetőség
+Ez a TikTok rádió élő műsorokkal, zenekéréssel, üzenetekkel és szavazásokkal!
+Élő adás TikTokon!
 </p>
-</section>
+</div>
 
-<!-- FIX SZAVAZÁS -->
-<section>
-<h2>📊 Fix szavazás</h2>
-<p>Tetszik a rádió?</p>
-<button onclick="vote('igen')">Igen</button>
-<button onclick="vote('nem')">Nem</button>
-<button onclick="vote('fejlodik')">Fejlődik</button>
-<p id="fixedResult"></p>
-</section>
+<div class="box">
+<h3>🗳 Fix szavazás</h3>
+<button onclick="voteFixed('A')">A</button>
+<button onclick="voteFixed('B')">B</button>
+</div>
 
-<!-- NAPI SZAVAZÁS -->
-<section>
-<h2>📅 Napi szavazás</h2>
-<p id="dailyQ">Betöltés...</p>
-<button onclick="voteDaily('a')">A</button>
-<button onclick="voteDaily('b')">B</button>
-<button onclick="voteDaily('c')">C</button>
-</section>
+<div class="box">
+<h3>🔥 Napi szavazás</h3>
+<button onclick="voteDaily('1')">1</button>
+<button onclick="voteDaily('2')">2</button>
+</div>
 
-<!-- ÜZENET -->
-<section>
-<h2>💌 Üzenet (anonim)</h2>
-<input id="name" placeholder="Név (nem jelenik meg)"><br>
-<textarea id="msg" placeholder="Üzenet szerettednek"></textarea><br>
-<button onclick="sendMsg()">Küldés</button>
-</section>
+<div class="box">
+<h3>💌 Üzenet küldése</h3>
+<input id="msg" placeholder="Írd ide...">
+<button onclick="sendMessage()">Küldés</button>
+</div>
 
-<!-- ZENEKÉRÉS -->
-<section>
-<h2>🎵 Zenekérés (név nélkül)</h2>
-<input id="song" placeholder="Kért zene"><br>
-<button onclick="sendSong()">Küldés</button>
-</section>
+<div class="box">
+<h3>🎵 Zenekérés</h3>
+<input id="song" placeholder="Dal címe...">
+<button onclick="requestSong()">Küldés</button>
+</div>
 
-<!-- MŰSOR -->
-<section>
-<h2>📅 Tematikus műsor</h2>
-<div id="schedule"></div>
-</section>
+<div class="box">
+<h3>📩 Elérhetőség</h3>
+<p>kohegyim44@gmail.com</p>
+</div>
 
-<!-- ELÉRHETŐSÉG -->
-<section>
-<h2>📞 Elérhetőség</h2>
-<p>
-📧 kohegyim44@gmail.com<br>
-📢 reklám / észrevétel ide jöhet
-</p>
-</section>
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
 <script>
+// 🔴 IDE MÁSOLD A SAJÁTOD!
+const firebaseConfig = {
+  apiKey: "IDE",
+  authDomain: "IDE",
+  databaseURL: "IDE",
+  projectId: "IDE",
+  storageBucket: "IDE",
+  messagingSenderId: "IDE",
+  appId: "IDE"
+};
 
-/* LIVE */
-function updateLive(){
-let live=localStorage.getItem("live");
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-let el=document.getElementById("live");
+// ON AIR
+db.ref("onAir").on("value", snap=>{
+  const el = document.getElementById("onair");
+  if(snap.val()){
+    el.innerText="🔴 ON AIR";
+  } else {
+    el.innerText="⚫ OFF AIR";
+  }
+});
 
-if(live==="on"){
-el.className="on";
-el.innerHTML="🔴 ON AIR LIVE";
-}else{
-el.className="off";
-el.innerHTML="⚫ OFF AIR";
+// SZAVAZÁS
+function voteFixed(v){
+  db.ref("votes/fixed/"+v).transaction(n=>(n||0)+1);
 }
-}
-updateLive();
-
-/* FIX SZAVAZÁS */
-function vote(v){
-let d=JSON.parse(localStorage.getItem("fixed"))||{igen:0,nem:0,fejlodik:0};
-d[v]++;
-localStorage.setItem("fixed",JSON.stringify(d));
-
-document.getElementById("fixedResult").innerText=
-`Igen:${d.igen} Nem:${d.nem} Fejlődik:${d.fejlodik}`;
-}
-
-/* NAPI SZAVAZÁS */
-let today=new Date().getDate();
-let q=["Milyen legyen a hangulat?","Melyik zene?","Interaktív adás?"];
-
-document.getElementById("dailyQ").innerText=q[today%q.length];
 
 function voteDaily(v){
-localStorage.setItem("dailyVote",v);
+  db.ref("votes/daily/"+v).transaction(n=>(n||0)+1);
 }
 
-/* ÜZENET */
-function sendMsg(){
-let msgs=JSON.parse(localStorage.getItem("msgs"))||[];
-
-msgs.push({
-msg:document.getElementById("msg").value,
-time:new Date().toLocaleString()
-});
-
-localStorage.setItem("msgs",JSON.stringify(msgs));
-alert("Elküldve ✔");
+// ÜZENET
+function sendMessage(){
+  const msg=document.getElementById("msg").value;
+  db.ref("messages").push({text:msg});
+  alert("Elküldve!");
 }
 
-/* ZENE */
-function sendSong(){
-let songs=JSON.parse(localStorage.getItem("songs"))||[];
-songs.push(document.getElementById("song").value);
-localStorage.setItem("songs",JSON.stringify(songs));
-alert("Kérés elküldve ✔");
+// ZENE
+function requestSong(){
+  const song=document.getElementById("song").value;
+  db.ref("songs").push({text:song});
+  alert("Elküldve!");
 }
-
-/* MŰSOR */
-let schedule=JSON.parse(localStorage.getItem("schedule"))||[];
-
-let box=document.getElementById("schedule");
-schedule.forEach(s=>{
-box.innerHTML+=`<div class="box">${s}</div>`;
-});
-
 </script>
 
 </body>
 </html>
-<!-- FIREBASE + RÁDIÓ RENDSZER -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
-
-<script>
-// 🔥 IDE ILLESZD BE A SAJÁT FIREBASE ADATAIDAT
-const firebaseConfig = {
-  apiKey: "IDE_A_TIÉD",
-  authDomain: "IDE_A_TIÉD",
-  databaseURL: "IDE_A_TIÉD",
-  projectId: "IDE_A_TIÉD",
-  storageBucket: "IDE_A_TIÉD",
-  messagingSenderId: "IDE_A_TIÉD",
-  appId: "IDE_A_TIÉD"
-};
-
-// INIT
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// =======================
-// 🎧 ON AIR ÁLLAPOT
-// =======================
-const onAirRef = db.ref("onAir");
-
-onAirRef.on("value", snap => {
-  const status = snap.val();
-  const el = document.getElementById("onair");
-
-  if(status){
-    el.innerText = "🔴 ON AIR";
-    el.style.color = "red";
-    el.style.textShadow = "0 0 20px red";
-  } else {
-    el.innerText = "⚫ OFF AIR";
-    el.style.color = "gray";
-  }
-});
-
-// =======================
-// 🗳 FIX SZAVAZÁS
-// =======================
-function voteFixed(val){
-  db.ref("votes/fixed/"+val).transaction(n => (n||0)+1);
-}
-
-// =======================
-// 🗳 NAPI SZAVAZÁS
-// =======================
-function voteDaily(val){
-  db.ref("votes/daily/"+val).transaction(n => (n||0)+1);
-}
-
-// =======================
-// 💌 ÜZENET KÜLDÉS (CSAK ADMIN LÁTJA)
-// =======================
-function sendMessage(){
-  const msg = document.getElementById("msg").value;
-
-  db.ref("messages").push({
-    text: msg,
-    time: Date.now()
-  });
-
-  alert("Üzenet elküldve!");
-}
-
-// =======================
-// 🎵 ZENEKÉRÉS
-// =======================
-function requestSong(){
-  const song = document.getElementById("song").value;
-
-  db.ref("songs").push({
-    text: song,
-    time: Date.now()
-  });
-
-  alert("Kérés elküldve!");
-}
-</script>
