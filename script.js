@@ -1,21 +1,36 @@
 
-/* 🗳️ FIX SZAVAZÁS */
+/* 🗳️ FIX */
 let fixed = JSON.parse(localStorage.getItem("fixedVotes")) || {
     A: 0, B: 0, C: 0
 };
 
-/* 🟣 NAPI SZAVAZÁS */
+/* 🟣 NAPI */
 let dailyVotes = JSON.parse(localStorage.getItem("dailyVotes")) || [0,0,0];
-
 let question = localStorage.getItem("dailyQuestion") || "Nincs napi kérdés";
-
 let options = JSON.parse(localStorage.getItem("dailyOptions")) || ["A","B","C"];
 
-/* 📩 ELÉRHETŐSÉG */
+/* 📩 */
 let contact = localStorage.getItem("contact") || "radioradio@example.com";
 
-/* ---------------- FIX SZAVAZÁS ---------------- */
+/* 🔴 LIVE */
+function updateLive() {
+    let live = localStorage.getItem("live") === "true";
 
+    let status = document.getElementById("status");
+    let card = document.getElementById("liveCard");
+
+    if (live) {
+        status.innerHTML = "🔴 ON AIR – Élő adás folyamatban!";
+        status.className = "live-on";
+        card.classList.add("live-active");
+    } else {
+        status.innerHTML = "⚫ Nincs élő adás jelenleg";
+        status.className = "live-off";
+        card.classList.remove("live-active");
+    }
+}
+
+/* FIX SZAVAZÁS */
 function voteFixed(type) {
     fixed[type]++;
     localStorage.setItem("fixedVotes", JSON.stringify(fixed));
@@ -27,8 +42,7 @@ function renderFixed() {
         `👍 Igen: ${fixed.A} | 👎 Nem: ${fixed.B} | 🤔 Van jövője: ${fixed.C}`;
 }
 
-/* ---------------- NAPI SZAVAZÁS ---------------- */
-
+/* NAPI SZAVAZÁS */
 function voteDaily(i) {
     dailyVotes[i]++;
     localStorage.setItem("dailyVotes", JSON.stringify(dailyVotes));
@@ -46,14 +60,14 @@ function renderDaily() {
         `Szavazatok: ${dailyVotes[0]} | ${dailyVotes[1]} | ${dailyVotes[2]}`;
 }
 
-/* 📅 MŰSOR */
+/* MŰSOR */
 let program = JSON.parse(localStorage.getItem("program")) || [];
 
 function renderProgram() {
     let html = "";
 
     if (program.length === 0) {
-        html = "Nincs műsor beállítva";
+        html = "Nincs műsor";
     } else {
         program.forEach(p => {
             html += `
@@ -68,7 +82,7 @@ function renderProgram() {
     document.getElementById("programListPublic").innerHTML = html;
 }
 
-/* 📩 ELÉRHETŐSÉG */
+/* ELÉRHETŐSÉG */
 function renderContact() {
     document.getElementById("contactInfo").innerText = "E-mail: " + contact;
     document.getElementById("contactLink").href = "mailto:" + contact;
@@ -79,3 +93,7 @@ renderFixed();
 renderDaily();
 renderProgram();
 renderContact();
+updateLive();
+
+/* frissítés */
+setInterval(updateLive, 2000);
