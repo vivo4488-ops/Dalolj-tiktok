@@ -22,21 +22,15 @@ padding:20px;
 width:80%;
 border-radius:15px;
 background:#222;
-transition:0.3s;
 }
 
 .onair{
 background:red;
-box-shadow:0 0 30px red;
-animation:pulse 1s infinite;
+box-shadow:0 0 25px red;
 }
 
 .offair{
 background:#333;
-}
-
-@keyframes pulse{
-50%{transform:scale(1.03);}
 }
 
 section{
@@ -73,24 +67,6 @@ margin:5px;
 border-radius:8px;
 text-align:left;
 }
-
-.wave{
-height:30px;
-background:repeating-linear-gradient(
-90deg,
-#00c6ff,
-#0072ff 10px,
-transparent 10px,
-transparent 20px
-);
-animation:wave 1s linear infinite;
-margin:10px 0;
-}
-
-@keyframes wave{
-0%{background-position:0;}
-100%{background-position:100px;}
-}
 </style>
 </head>
 
@@ -100,68 +76,28 @@ margin:10px 0;
 
 <div id="live" class="offair">⚫ OFF AIR</div>
 
-<div class="wave"></div>
-
 <!-- BEMUTATKOZÁS -->
 <section>
 <h2>📢 Bemutatkozás</h2>
 <p>
-<b>TikTok Rádió Lacival</b> egy online TikTok rádió 🎙️ ahol a közönség is része a műsornak.<br><br>
-
-🔥 Élő TikTok LIVE adások<br>
-🎵 Slágerek, TikTok zenék, mixek<br>
-💌 Szívküldi üzenetek beolvasása<br>
-📊 Szavazások és közönség döntések<br>
-📅 Napi műsorrend és tematikus blokkok<br>
-📢 Reklám és kérés lehetőség<br>
+TikTok Rádió Lacival 🎙️ – közösségi rádió, ahol a hallgatók is szerepet kapnak.
 </p>
 </section>
 
-<!-- SZAVAZÁS -->
-<section>
-<h2>📊 Szavazás</h2>
-<p>Tetszik a rádió?</p>
-<button onclick="alert('Igen')">Igen</button>
-<button onclick="alert('Nem')">Nem</button>
-<button onclick="alert('Még fejlesztés alatt')">Még jobb lesz</button>
-</section>
-
-<!-- ÜZENET -->
+<!-- ÜZENETKÜLDÉS -->
 <section>
 <h2>💬 Üzenetküldés</h2>
-<input placeholder="Neved"><br>
-<textarea placeholder="Üzenet"></textarea><br>
-<button>Küldés</button>
+
+<input id="name" placeholder="Neved"><br>
+<textarea id="msg" placeholder="Üzeneted"></textarea><br>
+
+<button onclick="sendMsg()">Küldés</button>
 </section>
 
-<!-- MŰSOR -->
+<!-- ÜZENETEK LISTÁJA -->
 <section>
-<h2>📅 Műsor tematika</h2>
-
-<div class="box">
-🕒 13:00 - 14:00<br>
-🎵 Hazai slágerek
-</div>
-
-<div class="box">
-🕒 14:00 - 15:00<br>
-💌 Szívküldi üzenetek
-</div>
-
-<div class="box">
-🕒 15:00 - 16:00<br>
-🔥 TikTok mix & trendek
-</div>
-</section>
-
-<!-- ELÉRHETŐSÉG -->
-<section>
-<h2>📞 Elérhetőség</h2>
-<p>
-📧 radio@tiktok.hu<br>
-🎵 TikTok: @tiktokradio_lacival<br>
-📢 Reklám / együttműködés: privát üzenet
-</p>
+<h2>📨 Beérkezett üzenetek</h2>
+<div id="messages"></div>
 </section>
 
 <script>
@@ -173,7 +109,7 @@ function updateLive(){
 let el=document.getElementById("live");
 
 if(live){
-el.innerHTML="🔴 ON AIR - ÉLŐ ADÁS";
+el.innerHTML="🔴 ON AIR";
 el.className="onair";
 }else{
 el.innerHTML="⚫ OFF AIR";
@@ -181,6 +117,59 @@ el.className="offair";
 }
 }
 updateLive();
+
+/* ÜZENET KÜLDÉS */
+function sendMsg(){
+
+let nameVal=document.getElementById("name").value;
+let msgVal=document.getElementById("msg").value;
+
+if(!nameVal || !msgVal){
+alert("Minden mezőt tölts ki!");
+return;
+}
+
+let msgs=JSON.parse(localStorage.getItem("messages"))||[];
+
+msgs.push({
+name:nameVal,
+msg:msgVal,
+time:new Date().toLocaleString()
+});
+
+localStorage.setItem("messages",JSON.stringify(msgs));
+
+document.getElementById("msg").value="";
+
+loadMessages();
+
+alert("Üzenet elküldve ✔");
+}
+
+/* ÜZENETEK BETÖLTÉSE */
+function loadMessages(){
+
+let msgs=JSON.parse(localStorage.getItem("messages"))||[];
+let box=document.getElementById("messages");
+
+box.innerHTML="";
+
+if(msgs.length===0){
+box.innerHTML="Nincs még üzenet";
+return;
+}
+
+msgs.reverse().forEach(m=>{
+box.innerHTML+=`
+<div class="box">
+<b>${m.name}</b> <small>${m.time}</small><br>
+${m.msg}
+</div>
+`;
+});
+}
+
+loadMessages();
 
 </script>
 
