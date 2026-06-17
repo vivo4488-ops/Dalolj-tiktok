@@ -11,16 +11,16 @@
 
 <!-- LIVE -->
 <section class="card">
-    <h2>🔴 LIVE kapcsoló</h2>
+    <h2>🔴 LIVE</h2>
     <button onclick="toggleLive()">LIVE ON/OFF</button>
 </section>
 
 <!-- MŰSOR -->
 <section class="card">
-    <h2>📅 Műsor hozzáadás</h2>
+    <h2>📅 Műsor</h2>
 
-    <input id="from" placeholder="tól (pl. 13:00)">
-    <input id="to" placeholder="ig (pl. 14:00)">
+    <input id="from" placeholder="tól (13:00)">
+    <input id="to" placeholder="ig (14:00)">
     <input id="desc" placeholder="műsor leírás">
 
     <button onclick="addProgram()">Hozzáadás</button>
@@ -28,16 +28,16 @@
     <ul id="programList"></ul>
 </section>
 
-<!-- FIX SZAVAZÁS TÉMA -->
+<!-- FIX SZAVAZÁS -->
 <section class="card">
     <h2>📊 Állandó szavazás</h2>
     <input id="topicInput" placeholder="pl: Tetszik a rádió?">
     <button onclick="setTopic()">Mentés</button>
 </section>
 
-<!-- 🟣 NAPI SZAVAZÁS -->
+<!-- NAPI SZAVAZÁS -->
 <section class="card">
-    <h2>🗳️ Napi szavazás beállítás</h2>
+    <h2>🗳️ Napi szavazás</h2>
 
     <input id="q" placeholder="kérdés">
     <input id="o1" placeholder="válasz 1">
@@ -45,6 +45,14 @@
     <input id="o3" placeholder="válasz 3">
 
     <button onclick="setDaily()">Mentés</button>
+</section>
+
+<!-- 📩 ELÉRHETŐSÉG -->
+<section class="card">
+    <h2>📩 Elérhetőség</h2>
+
+    <input id="contactInput" placeholder="email cím">
+    <button onclick="setContact()">Mentés</button>
 </section>
 
 <script src="admin.js"></script>
