@@ -88,7 +88,7 @@ button{
 
 <script>
 
-/* 🔥 FIREBASE (IDE TEDD A SAJÁTOD) */
+/* 🔥 FIREBASE – EZT TÖLTSD KI A SAJÁTODDAL */
 const firebaseConfig = {
   apiKey: "IDE",
   authDomain: "IDE",
@@ -102,16 +102,16 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* LIVE */
+/* LIVE STATUS (GitHub + kézi vezérlés) */
 function loadLive(){
     let live = localStorage.getItem("live");
     let box = document.getElementById("liveBox");
 
     if(live === "true"){
-        box.innerText = "🔴 ÉLŐ ADÁS";
+        box.innerText = "🔴 ÉLŐ ADÁS MOST!";
         box.className = "live";
     } else {
-        box.innerText = "⚫ NINCS ÉLŐ";
+        box.innerText = "⚫ NINCS ÉLŐ ADÁS";
         box.className = "off";
     }
 }
@@ -133,9 +133,12 @@ function send(){
     });
 
     status.innerText = "Elküldve 🎧";
+
+    document.getElementById("name").value = "";
+    document.getElementById("msg").value = "";
 }
 
-/* ÜZENETEK */
+/* ÜZENETEK LISTÁZÁSA */
 db.ref("messages").on("value",snap=>{
     let data = snap.val();
     let box = document.getElementById("messages");
@@ -143,10 +146,12 @@ db.ref("messages").on("value",snap=>{
 
     for(let id in data){
         let m = data[id];
+
         let d = document.createElement("div");
         d.style.border="1px solid gray";
         d.style.margin="5px";
         d.style.padding="5px";
+
         d.innerHTML = `<b>${m.name}</b>: ${m.msg}`;
         box.appendChild(d);
     }
@@ -158,8 +163,8 @@ function vote(v){
     data[v]++;
     localStorage.setItem("votes",JSON.stringify(data));
 
-    votes.innerText =
-    `Igen: ${data.igen} | Nem: ${data.nem} | Jövő: ${data.jovo}`;
+    document.getElementById("votes").innerText =
+    `Igen: ${data.igen} | Nem: ${data.nem} | Van jövője: ${data.jovo}`;
 }
 
 /* INIT */
