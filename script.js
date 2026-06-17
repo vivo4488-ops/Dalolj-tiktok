@@ -1,40 +1,13 @@
-let live = false;
+let votes = JSON.parse(localStorage.getItem("votes")) || { A: 0, B: 0 };
 
-function toggleLive() {
-    live = !live;
-    document.getElementById("status").innerText =
-        live ? "🔴 Élő adás VAN!" : "⚫ Nincs élő adás";
-}
+let topic = localStorage.getItem("topic") || "Nincs beállított műsor";
 
-/* SZAVAZÁS */
-let votes = { A: 0, B: 0 };
+document.getElementById("voteTopic").innerText = "Szavazás: " + topic;
 
 function vote(type) {
     votes[type]++;
+    localStorage.setItem("votes", JSON.stringify(votes));
+
     document.getElementById("result").innerText =
-        `Pop: ${votes.A} | Rap: ${votes.B}`;
-}
-
-/* ZENEKÉRÉS */
-function requestSong() {
-    let song = document.getElementById("songInput").value;
-    if (!song) return;
-
-    let li = document.createElement("li");
-    li.textContent = "🎵 " + song;
-    document.getElementById("songList").appendChild(li);
-
-    document.getElementById("songInput").value = "";
-}
-
-/* SZÍVKÜLDI */
-function sendMessage() {
-    let msg = document.getElementById("msgInput").value;
-    if (!msg) return;
-
-    let li = document.createElement("li");
-    li.textContent = "💌 " + msg;
-    document.getElementById("msgList").appendChild(li);
-
-    document.getElementById("msgInput").value = "";
+        `A: ${votes.A} | B: ${votes.B}`;
 }
