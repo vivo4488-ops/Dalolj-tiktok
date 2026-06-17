@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - TikTok Rádió</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>🔐 Admin panel</h1>
+
+<!-- LIVE -->
+<section class="card">
+    <h2>🔴 LIVE</h2>
+    <button onclick="toggleLive()">LIVE ON/OFF</button>
+</section>
+
+<!-- MŰSOR IDŐVEL -->
+<section class="card">
+    <h2>📅 Műsor beállítás (tól–ig)</h2>
+
+    <input id="from" placeholder="pl: 13:00">
+    <input id="to" placeholder="pl: 14:00">
+    <input id="desc" placeholder="pl: 90-es évek magyar zenéi">
+
+    <button onclick="addProgram()">Hozzáadás</button>
+
+    <ul id="programList"></ul>
+</section>
+
+<!-- SZAVAZÁS TÉMA -->
+<section class="card">
+    <h2>📊 Szavazás téma</h2>
+    <input id="topicInput" placeholder="pl: Pop vs Rap">
+    <button onclick="setTopic()">Mentés</button>
+</section>
+
+<script src="admin.js"></script>
+</body>
+</html>
