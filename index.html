@@ -24,9 +24,19 @@ body {
 h1 { margin-top:20px; }
 
 #onair {
-  font-size:40px;
+  font-size:45px;
   margin:20px;
-  text-shadow: 0 0 20px red;
+  text-shadow: 0 0 25px red;
+}
+
+button {
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:#00ccff;
+  color:black;
+  cursor:pointer;
+  margin:5px;
 }
 
 .box {
@@ -44,32 +54,24 @@ input, textarea {
   border:none;
 }
 
-button {
-  padding:10px 20px;
-  border:none;
-  border-radius:10px;
-  background:#00ccff;
-  color:black;
-  cursor:pointer;
-}
-
 .wave {
-  height:50px;
+  height:60px;
   margin-top:20px;
 }
 
 .bar {
-  width:5px;
+  width:6px;
   height:20px;
   display:inline-block;
   margin:2px;
-  background:white;
+  background:#00ffff;
   animation:wave 1s infinite;
+  box-shadow:0 0 10px #00ffff;
 }
 
 @keyframes wave {
   0%{height:10px}
-  50%{height:40px}
+  50%{height:50px}
   100%{height:10px}
 }
 </style>
@@ -81,10 +83,12 @@ button {
 <h1>🎧 TikTok Rádió Lacival</h1>
 
 <div id="onair">🔴 ON AIR</div>
+<button onclick="toggleAir()">ON/OFF váltás</button>
 
 <div class="wave">
   <div class="bar"></div><div class="bar"></div><div class="bar"></div>
   <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  <div class="bar"></div><div class="bar"></div>
 </div>
 
 <div class="box">
@@ -94,6 +98,25 @@ Ez a TikTok rádió élő adásban működik!
 Zenék, kívánságműsorok, üzenetek és interaktív műsorok várnak rád.  
 Írj a szerelmednek vagy barátaidnak — és beolvassuk élőben!
 </p>
+</div>
+
+<div class="box">
+<h2>📻 Műsor tematika</h2>
+<p>
+13:00–14:00 Hazai slágerek<br>
+14:00–15:00 Üzenetek beolvasása<br>
+15:00–16:00 Kívánságműsor
+</p>
+</div>
+
+<div class="box">
+<h2>🗳️ Szavazás</h2>
+<p>Milyen zene szóljon?</p>
+<button onclick="vote('pop')">Pop</button>
+<button onclick="vote('retro')">Retro</button>
+<button onclick="vote('mulatos')">Mulatós</button>
+
+<p id="result"></p>
 </div>
 
 <div class="box">
@@ -114,18 +137,37 @@ Zenék, kívánságműsorok, üzenetek és interaktív műsorok várnak rád.
 </div>
 
 <script>
+let onAir = true;
+
+function toggleAir(){
+  onAir = !onAir;
+  document.getElementById("onair").innerText =
+    onAir ? "🔴 ON AIR" : "⚫ OFF AIR";
+}
+
+// SZAVAZÁS (local)
+let votes = {pop:0, retro:0, mulatos:0};
+
+function vote(type){
+  votes[type]++;
+  document.getElementById("result").innerText =
+    "Pop: " + votes.pop +
+    " | Retro: " + votes.retro +
+    " | Mulatós: " + votes.mulatos;
+}
+
+// ÜZENET
 function sendMessage(){
   const msg = document.getElementById("msg").value;
   if(!msg) return alert("Írj valamit!");
-
-  alert("Üzenet elküldve! (adásban felhasználható)");
+  alert("Üzenet elküldve!");
   document.getElementById("msg").value="";
 }
 
+// ZENE
 function requestSong(){
   const song = document.getElementById("song").value;
   if(!song) return alert("Írj zenét!");
-
   alert("Zenekérés elküldve!");
   document.getElementById("song").value="";
 }
