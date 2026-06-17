@@ -3,116 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin</title>
-
 <style>
-body {
-    background: #111;
-    color: white;
-    font-family: Arial;
-    text-align: center;
-}
-
-input {
-    padding: 10px;
-}
-
-button {
-    padding: 10px;
-    margin: 5px;
-}
+body { background:#111; color:white; text-align:center; font-family:Arial;}
+input,button{padding:10px;margin:5px;}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="loginBox">
-    <h2>🔐 Admin belépés</h2>
-    <input id="password" type="password" placeholder="Jelszó"><br><br>
-    <button onclick="login()">Belépés</button>
-    <p id="error" style="color:red;"></p>
+<div id="login">
+<h2>🔐 Belépés</h2>
+<input id="pass" type="password">
+<button onclick="login()">OK</button>
+<p id="err"></p>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" style="display:none;">
+<div id="panel" style="display:none;">
 
-<h1>🎛 Admin Panel</h1>
+<h1>Admin</h1>
 
-<h2>🔴 Élő adás vezérlés</h2>
-<button onclick="setLive(true)">LIVE BE</button>
-<button onclick="setLive(false)">LIVE KI</button>
+<!-- LIVE -->
+<h2>LIVE</h2>
+<button onclick="setLive(true)">BE</button>
+<button onclick="setLive(false)">KI</button>
 
-<hr>
+<!-- TEMATIKA -->
+<h2>Tematika</h2>
+<input id="from" placeholder="tól">
+<input id="to" placeholder="ig">
+<input id="name" placeholder="műsor">
+<button onclick="add()">Hozzáad</button>
+<div id="list"></div>
 
-<h2>📩 Üzenetek</h2>
-<div id="messageList"></div>
+<!-- NAPI -->
+<h2>Napi kérdés</h2>
+<input id="dq" placeholder="kérdés"><br>
+<input id="o1"><input id="o2"><input id="o3"><br>
+<button onclick="saveDaily()">Mentés</button>
+
+<!-- KONTAKT -->
+<h2>Kapcsolat</h2>
+<input id="contactInput" placeholder="email stb">
+<button onclick="saveContact()">Mentés</button>
+
+<!-- ÜZENETEK -->
+<h2>Üzenetek</h2>
+<div id="msgs"></div>
 
 </div>
 
 <script>
-const PASSWORD = "radio123";
+const P="radio123";
 
-function login() {
-    const pass = document.getElementById("password").value;
-
-    if (pass === PASSWORD) {
-        localStorage.setItem("adminAuth", "true");
-        showAdmin();
-    } else {
-        document.getElementById("error").innerText = "Hibás jelszó!";
-    }
+function login(){
+ if(pass.value===P){
+  localStorage.setItem("admin","1");
+  show();
+ } else err.innerText="Hibás";
 }
 
-function showAdmin() {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
-    loadMessages();
+function show(){
+ login.style.display="none";
+ panel.style.display="block";
+ load(); loadMsgs();
 }
 
-function setLive(state) {
-    localStorage.setItem("radioLive", state);
+function setLive(v){localStorage.setItem("radioLive",v);}
+
+/* TEMATIKA */
+function add(){
+ let s=JSON.parse(localStorage.getItem("schedule"))||[];
+ s.push({from:from.value,to:to.value,name:name.value});
+ localStorage.setItem("schedule",JSON.stringify(s));
+ load();
 }
 
-/* Üzenetek */
-function loadMessages() {
-    const container = document.getElementById("messageList");
-    container.innerHTML = "";
-
-    let messages = JSON.parse(localStorage.getItem("radioMessages")) || [];
-
-    messages.reverse().forEach((msg, index) => {
-        const div = document.createElement("div");
-
-        div.style.border = "1px solid gray";
-        div.style.margin = "10px";
-        div.style.padding = "10px";
-
-        div.innerHTML = `
-            <b>${msg.name}</b> (${msg.time})<br>
-            ${msg.text}<br><br>
-            <button onclick="deleteMessage(${messages.length - 1 - index})">Törlés</button>
-        `;
-
-        container.appendChild(div);
-    });
+function load(){
+ let s=JSON.parse(localStorage.getItem("schedule"))||[];
+ list.innerHTML="";
+ s.forEach((x,i)=>{
+  let d=document.createElement("div");
+  d.innerHTML=`${x.from}-${x.to} ${x.name}
+  <button onclick="del(${i})">X</button>`;
+  list.appendChild(d);
+ });
+}
+function del(i){
+ let s=JSON.parse(localStorage.getItem("schedule"));
+ s.splice(i,1);
+ localStorage.setItem("schedule",JSON.stringify(s));
+ load();
 }
 
-function deleteMessage(i) {
-    let messages = JSON.parse(localStorage.getItem("radioMessages")) || [];
-
-    messages.splice(i, 1);
-
-    localStorage.setItem("radioMessages", JSON.stringify(messages));
-
-    loadMessages();
+/* NAPI */
+function saveDaily(){
+ localStorage.setItem("dailyQ",dq.value);
+ localStorage.setItem("dailyOpts",JSON.stringify([o1.value,o2.value,o3.value]));
 }
 
-/* AUTO LOGIN */
-window.onload = function () {
-    if (localStorage.getItem("adminAuth") === "true") {
-        showAdmin();
-    }
-};
+/* KONTAKT */
+function saveContact(){
+ localStorage.setItem("contact",contactInput.value);
+}
+
+/* ÜZENET */
+function loadMsgs(){
+ let m=JSON.parse(localStorage.getItem("msgs"))||[];
+ msgs.innerHTML="";
+ m.reverse().forEach((x,i)=>{
+  let d=document.createElement("div");
+  d.innerHTML=`${x.name}: ${x.text}
+  <button onclick="dm(${m.length-1-i})">Törlés</button>`;
+  msgs.appendChild(d);
+ });
+}
+function dm(i){
+ let m=JSON.parse(localStorage.getItem("msgs"));
+ m.splice(i,1);
+ localStorage.setItem("msgs",JSON.stringify(m));
+ loadMsgs();
+}
+
+/* AUTO */
+window.onload=()=>{
+ if(localStorage.getItem("admin")==="1") show();
+}
 </script>
 
 </body>
