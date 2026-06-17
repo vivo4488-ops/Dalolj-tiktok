@@ -5,45 +5,104 @@
 <title>TikTok Rádió</title>
 
 <style>
-body{
+body {
   margin:0;
   font-family:Arial;
-  background:#001f4d;
   color:white;
   text-align:center;
+  background: linear-gradient(-45deg, #001f4d, #0033cc, #000);
+  background-size:400% 400%;
+  animation:bg 10s infinite;
 }
 
-h1{margin-top:20px;}
+@keyframes bg {
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
 
-.box{
-  background:#002b80;
+h1 { margin-top:20px; }
+
+#onair {
+  font-size:50px;
+  color:red;
+  text-shadow:0 0 20px red,0 0 40px red;
+  margin:20px;
+}
+
+.box {
+  background:rgba(255,255,255,0.1);
   margin:20px;
   padding:20px;
-  border-radius:10px;
+  border-radius:15px;
+  backdrop-filter:blur(10px);
 }
 
-input, textarea{
+input, textarea {
   width:80%;
   padding:10px;
   margin:10px;
+  border-radius:10px;
   border:none;
-  border-radius:5px;
 }
 
-button{
+button {
   padding:10px 20px;
   border:none;
+  border-radius:10px;
   background:#00ccff;
   cursor:pointer;
-  border-radius:5px;
+}
+
+.wave {
+  margin:20px;
+}
+
+.bar {
+  width:5px;
+  height:20px;
+  display:inline-block;
+  margin:2px;
+  background:#00ffff;
+  animation:wave 1s infinite;
+  box-shadow:0 0 10px #00ffff;
+}
+
+@keyframes wave {
+  0%{height:10px}
+  50%{height:50px}
+  100%{height:10px}
 }
 </style>
-
 </head>
 
 <body>
 
 <h1>🎧 TikTok Rádió Lacival</h1>
+
+<div id="onair">🔴 ON AIR</div>
+
+<div class="wave">
+  <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  <div class="bar"></div>
+</div>
+
+<div class="box">
+<h2>📻 Bemutatkozás</h2>
+<p>
+Ez egy élő TikTok rádió, ahol zenék, kívánságok és üzenetek szólnak.
+Írj, kérj zenét — és bekerülsz az adásba!
+</p>
+</div>
+
+<div class="box">
+<h2>🗳️ Szavazás</h2>
+<button onclick="vote('Pop')">Pop</button>
+<button onclick="vote('Retro')">Retro</button>
+<button onclick="vote('Mulatós')">Mulatós</button>
+<p id="res"></p>
+</div>
 
 <div class="box">
 <h2>📩 Üzenet</h2>
@@ -63,27 +122,37 @@ button{
 </div>
 
 <script>
+// SZAVAZÁS
+let votes={Pop:0,Retro:0,Mulatós:0};
+function vote(v){
+  votes[v]++;
+  document.getElementById("res").innerText =
+    `Pop:${votes.Pop} | Retro:${votes.Retro} | Mulatós:${votes.Mulatós}`;
+}
+
+// ÜZENET
 function sendMessage(){
-  const msg=document.getElementById("msg").value;
+  let msg=document.getElementById("msg").value;
   if(!msg) return alert("Írj valamit");
 
   let m=JSON.parse(localStorage.getItem("m")||"[]");
   m.push(msg);
   localStorage.setItem("m",JSON.stringify(m));
 
-  alert("OK");
+  alert("Elküldve!");
   document.getElementById("msg").value="";
 }
 
+// ZENE
 function requestSong(){
-  const song=document.getElementById("song").value;
+  let song=document.getElementById("song").value;
   if(!song) return alert("Írj zenét");
 
   let s=JSON.parse(localStorage.getItem("s")||"[]");
   s.push(song);
   localStorage.setItem("s",JSON.stringify(s));
 
-  alert("OK");
+  alert("Elküldve!");
   document.getElementById("song").value="";
 }
 </script>
