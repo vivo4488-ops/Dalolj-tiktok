@@ -3,55 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <title>ADMIN</title>
-
-<style>
-body{
-  font-family:Arial;
-  background:#111;
-  color:white;
-  padding:20px;
-}
-.box{
-  background:#222;
-  margin:20px 0;
-  padding:15px;
-}
-</style>
-
 </head>
 
 <body>
 
 <h1>ADMIN</h1>
 
-<button onclick="load()">Frissítés</button>
-<button onclick="clearAll()">Törlés</button>
+<h2>Napi szavazás</h2>
+<input id="q" placeholder="Kérdés"><br>
+<input id="o1" placeholder="Opció 1"><br>
+<input id="o2" placeholder="Opció 2"><br>
+<button onclick="saveDaily()">Mentés</button>
 
-<div class="box">
-<h2>Üzenetek</h2>
-<div id="m"></div>
-</div>
-
-<div class="box">
-<h2>Zenék</h2>
-<div id="s"></div>
-</div>
+<h2>Tematika</h2>
+<textarea id="prog"></textarea><br>
+<button onclick="saveProg()">Mentés</button>
 
 <script>
-function load(){
-  let m=JSON.parse(localStorage.getItem("m")||"[]");
-  let s=JSON.parse(localStorage.getItem("s")||"[]");
-
-  document.getElementById("m").innerHTML=m.join("<br>");
-  document.getElementById("s").innerHTML=s.join("<br>");
+function saveDaily(){
+  let data={
+    q:document.getElementById("q").value,
+    options:[
+      document.getElementById("o1").value,
+      document.getElementById("o2").value
+    ]
+  };
+  localStorage.setItem("daily",JSON.stringify(data));
+  alert("Mentve");
 }
 
-function clearAll(){
-  localStorage.clear();
-  load();
+function saveProg(){
+  let p=document.getElementById("prog").value.split("\n");
+  localStorage.setItem("program",JSON.stringify(p));
+  alert("Mentve");
 }
-
-load();
 </script>
 
 </body>
