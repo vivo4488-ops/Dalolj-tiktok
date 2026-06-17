@@ -1,65 +1,52 @@
-function toggleLive() {
-    let live = localStorage.getItem("live") === "true";
-    localStorage.setItem("live", !live);
-    alert(live ? "LIVE kikapcsolva" : "LIVE bekapcsolva");
-}
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - TikTok Rádió</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-/* 📅 HOZZÁADÁS */
-function addProgram() {
-    let from = document.getElementById("from").value;
-    let to = document.getElementById("to").value;
-    let desc = document.getElementById("desc").value;
+<h1>🔐 Admin panel</h1>
 
-    if (!from || !to || !desc) return;
+<!-- LIVE -->
+<section class="card">
+    <h2>🔴 LIVE kapcsoló</h2>
+    <button onclick="toggleLive()">LIVE ON/OFF</button>
+</section>
 
-    let program = JSON.parse(localStorage.getItem("program")) || [];
+<!-- MŰSOR -->
+<section class="card">
+    <h2>📅 Műsor hozzáadás</h2>
 
-    program.push({ from, to, desc });
+    <input id="from" placeholder="tól (pl. 13:00)">
+    <input id="to" placeholder="ig (pl. 14:00)">
+    <input id="desc" placeholder="műsor leírás">
 
-    localStorage.setItem("program", JSON.stringify(program));
+    <button onclick="addProgram()">Hozzáadás</button>
 
-    render();
-}
+    <ul id="programList"></ul>
+</section>
 
-/* 📋 MEGJELENÍTÉS + TÖRLÉS */
-function render() {
-    let list = document.getElementById("programList");
-    list.innerHTML = "";
+<!-- FIX SZAVAZÁS TÉMA -->
+<section class="card">
+    <h2>📊 Állandó szavazás</h2>
+    <input id="topicInput" placeholder="pl: Tetszik a rádió?">
+    <button onclick="setTopic()">Mentés</button>
+</section>
 
-    let program = JSON.parse(localStorage.getItem("program")) || [];
+<!-- 🟣 NAPI SZAVAZÁS -->
+<section class="card">
+    <h2>🗳️ Napi szavazás beállítás</h2>
 
-    program.forEach((p, index) => {
-        let li = document.createElement("li");
-        li.innerHTML = `
-            ${p.from} - ${p.to} → ${p.desc}
-            <button onclick="deleteProgram(${index})">❌</button>
-        `;
-        list.appendChild(li);
-    });
-}
+    <input id="q" placeholder="kérdés">
+    <input id="o1" placeholder="válasz 1">
+    <input id="o2" placeholder="válasz 2">
+    <input id="o3" placeholder="válasz 3">
 
-/* ❌ TÖRLÉS */
-function deleteProgram(index) {
-    let program = JSON.parse(localStorage.getItem("program")) || [];
+    <button onclick="setDaily()">Mentés</button>
+</section>
 
-    program.splice(index, 1);
-
-    localStorage.setItem("program", JSON.stringify(program));
-
-    render();
-}
-
-/* 🧹 ÖSSZES TÖRLÉSE (OPCIONÁLIS) */
-function clearProgram() {
-    localStorage.removeItem("program");
-    render();
-}
-
-/* 📊 SZAVAZÁS TÉMA */
-function setTopic() {
-    let topic = document.getElementById("topicInput").value;
-    localStorage.setItem("topic", topic);
-    alert("Téma mentve!");
-}
-
-render();
+<script src="admin.js"></script>
+</body>
+</html>
