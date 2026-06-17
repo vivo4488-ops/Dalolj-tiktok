@@ -11,50 +11,19 @@
 body{
     margin:0;
     font-family:Arial;
-    background: linear-gradient(135deg,#0a0f2c,#1a2a6c);
+    background:linear-gradient(135deg,#0a0f2c,#1a2a6c);
     color:white;
     text-align:center;
 }
 
-h1{margin-top:20px;}
-
-#liveStatus{
-    margin:20px auto;
-    padding:15px;
-    width:80%;
-    border-radius:10px;
-    font-size:22px;
-}
-
-.live{
-    background:red;
-    animation:glow 1s infinite alternate;
-}
-
-.offline{background:#333;}
-
-@keyframes glow{
-    from{box-shadow:0 0 10px red;}
-    to{box-shadow:0 0 30px red;}
-}
-
-.wave{
-    height:40px;
-    background:linear-gradient(90deg,red,transparent);
-    animation:wave 2s infinite linear;
-}
-
-@keyframes wave{
-    from{transform:translateX(-100%);}
-    to{transform:translateX(100%);}
-}
+h1{margin:20px;}
 
 section{
-    margin:40px auto;
-    width:85%;
+    width:90%;
     max-width:700px;
+    margin:20px auto;
+    padding:15px;
     background:rgba(255,255,255,0.05);
-    padding:20px;
     border-radius:10px;
 }
 
@@ -62,14 +31,30 @@ input,textarea{
     width:90%;
     padding:10px;
     margin:5px;
-    border-radius:5px;
-    border:none;
 }
 
 button{
-    padding:10px 15px;
+    padding:10px;
     margin:5px;
     cursor:pointer;
+}
+
+.live{
+    background:red;
+    padding:10px;
+    border-radius:10px;
+    animation:glow 1s infinite alternate;
+}
+
+.off{
+    background:#333;
+    padding:10px;
+    border-radius:10px;
+}
+
+@keyframes glow{
+    from{box-shadow:0 0 10px red;}
+    to{box-shadow:0 0 25px red;}
 }
 </style>
 </head>
@@ -78,60 +63,32 @@ button{
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="liveStatus">Betöltés...</div>
-<div class="wave"></div>
+<div id="liveBox" class="off">Betöltés...</div>
 
-<!-- ISMERTETŐ -->
-<section>
-<h2>ℹ️ Miről szól a rádió?</h2>
-<p>
-Üdv a <b>TikTok Rádió Lacival</b> oldalán! 🎶<br><br>
-
-Ez egy élő, interaktív online rádió:<br>
-✔ zenét kérhetsz<br>
-✔ üzenetet küldhetsz (akár szerelmednek 💖)<br>
-✔ részt vehetsz szavazásokban<br>
-✔ élő TikTok adásra csatlakozhatsz<br><br>
-
-💬 A küldött üzenetek és zenekérések beolvashatók az adásban!
-</p>
-</section>
-
-<!-- TEMATIKA -->
-<section>
-<h2>📅 Műsor tematika</h2>
-<div id="schedule"></div>
-</section>
-
-<!-- SZAVAZÁS -->
-<section>
-<h2>📊 Tetszik a rádió?</h2>
-<button onclick="vote('igen')">Igen</button>
-<button onclick="vote('nem')">Nem</button>
-<button onclick="vote('jovo')">Van jövője</button>
-<p id="voteResult"></p>
-</section>
-
-<!-- ÜZENET -->
 <section>
 <h2>💬 Üzenet / Zenekérés</h2>
-
 <input id="name" placeholder="Neved">
-<textarea id="msg" placeholder="Üzenet vagy zenekérés"></textarea>
-<button onclick="sendMsg()">Küldés</button>
-
+<textarea id="msg" placeholder="Üzenet vagy zene"></textarea>
+<button onclick="send()">Küldés</button>
 <p id="status"></p>
 </section>
 
-<!-- ÜZENETEK LISTA -->
 <section>
-<h2>📩 Beérkezett üzenetek</h2>
+<h2>📩 Üzenetek</h2>
 <div id="messages"></div>
+</section>
+
+<section>
+<h2>📊 Szavazás</h2>
+<button onclick="vote('igen')">Igen</button>
+<button onclick="vote('nem')">Nem</button>
+<button onclick="vote('jovo')">Van jövője</button>
+<p id="votes"></p>
 </section>
 
 <script>
 
-/* 🔥 FIREBASE IDE KERÜL */
+/* 🔥 FIREBASE (IDE TEDD A SAJÁTOD) */
 const firebaseConfig = {
   apiKey: "IDE",
   authDomain: "IDE",
@@ -147,35 +104,25 @@ const db = firebase.database();
 
 /* LIVE */
 function loadLive(){
-    let live = localStorage.getItem("radioLive");
-    let el = document.getElementById("liveStatus");
+    let live = localStorage.getItem("live");
+    let box = document.getElementById("liveBox");
 
-    if(live==="true"){
-        el.innerText="🔴 ÉLŐ ADÁS MOST!";
-        el.className="live";
-    }else{
-        el.innerText="⚫ NINCS ÉLŐ ADÁS";
-        el.className="offline";
+    if(live === "true"){
+        box.innerText = "🔴 ÉLŐ ADÁS";
+        box.className = "live";
+    } else {
+        box.innerText = "⚫ NINCS ÉLŐ";
+        box.className = "off";
     }
 }
 
-/* SZAVAZÁS */
-function vote(v){
-    let data = JSON.parse(localStorage.getItem("votes"))||{igen:0,nem:0,jovo:0};
-    data[v]++;
-    localStorage.setItem("votes",JSON.stringify(data));
+/* ÜZENET KÜLDÉS */
+function send(){
+    let n = document.getElementById("name").value;
+    let m = document.getElementById("msg").value;
 
-    document.getElementById("voteResult").innerText =
-    `Igen: ${data.igen} | Nem: ${data.nem} | Jövő: ${data.jovo}`;
-}
-
-/* ÜZENET KÜLDÉS (FIREBASE) */
-function sendMsg(){
-    let n=document.getElementById("name").value;
-    let m=document.getElementById("msg").value;
-
-    if(!n||!m){
-        status.innerText="Tölts ki mindent!";
+    if(!n || !m){
+        status.innerText = "Tölts ki mindent!";
         return;
     }
 
@@ -185,49 +132,38 @@ function sendMsg(){
         time:new Date().toLocaleString()
     });
 
-    status.innerText="Elküldve 🎧";
-    name.value="";
-    msg.value="";
+    status.innerText = "Elküldve 🎧";
 }
 
-/* ÜZENETEK BETÖLTÉSE */
+/* ÜZENETEK */
 db.ref("messages").on("value",snap=>{
-    let data=snap.val();
-    let box=document.getElementById("messages");
+    let data = snap.val();
+    let box = document.getElementById("messages");
     box.innerHTML="";
 
     for(let id in data){
-        let m=data[id];
-
-        let div=document.createElement("div");
-        div.style.border="1px solid gray";
-        div.style.margin="5px";
-        div.style.padding="5px";
-
-        div.innerHTML=`<b>${m.name}</b>: ${m.msg}`;
-
-        box.appendChild(div);
+        let m = data[id];
+        let d = document.createElement("div");
+        d.style.border="1px solid gray";
+        d.style.margin="5px";
+        d.style.padding="5px";
+        d.innerHTML = `<b>${m.name}</b>: ${m.msg}`;
+        box.appendChild(d);
     }
 });
 
-/* TEMATIKA DEMO */
-function loadSchedule(){
-    let demo=[
-        "13:00 Magyar retro zenék",
-        "14:00 Szívküldi üzenetek",
-        "16:00 Kért zenék"
-    ];
+/* SZAVAZÁS */
+function vote(v){
+    let data = JSON.parse(localStorage.getItem("votes")) || {igen:0,nem:0,jovo:0};
+    data[v]++;
+    localStorage.setItem("votes",JSON.stringify(data));
 
-    let box=document.getElementById("schedule");
-    demo.forEach(x=>{
-        let p=document.createElement("p");
-        p.innerText=x;
-        box.appendChild(p);
-    });
+    votes.innerText =
+    `Igen: ${data.igen} | Nem: ${data.nem} | Jövő: ${data.jovo}`;
 }
 
+/* INIT */
 loadLive();
-loadSchedule();
 
 </script>
 
