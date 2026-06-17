@@ -155,6 +155,24 @@ loadMessages();
 loadSongs();
 
 </script>
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
 
+function load(){
+  fetch(API)
+  .then(r=>r.json())
+  .then(data=>{
+    let msg="", song="";
+
+    data.forEach(row=>{
+      if(row[0]==="message") msg += row[1]+"<br>";
+      if(row[0]==="song") song += row[1]+"<br>";
+    });
+
+    document.getElementById("messages").innerHTML = msg;
+    document.getElementById("songs").innerHTML = song;
+  });
+}
+</script>
 </body>
 </html>
