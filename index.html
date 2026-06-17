@@ -1,90 +1,131 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <title>TikTok Rádió Lacival</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>TikTok Rádió</title>
+
+<style>
+body {
+    background: linear-gradient(135deg, #0a0f2c, #1a2a6c);
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+/* LIVE jelzés */
+#liveStatus {
+    font-size: 24px;
+    margin: 20px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.live {
+    background: red;
+    animation: glow 1s infinite alternate;
+}
+
+.offline {
+    background: gray;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 10px red; }
+    to { box-shadow: 0 0 30px red; }
+}
+
+/* hullám animáció */
+.wave {
+    width: 100%;
+    height: 50px;
+    background: linear-gradient(90deg, red, transparent);
+    animation: waveMove 2s infinite linear;
+}
+
+@keyframes waveMove {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+}
+
+input, textarea {
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+}
+button {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-<header>
-    <h1>🎧 TikTok Rádió Lacival</h1>
-    <p>Élő műsor • Közösség • Zene • Szavazás</p>
-</header>
+<h1>🎧 TikTok Rádió</h1>
 
-<!-- 📻 LEÍRÁS -->
-<section class="card">
-    <h2>📻 Mi ez a rádió?</h2>
-    <p>
-        Ez egy online TikTok rádió közösségi műsorral. Hallgathatsz tematikus zenéket,
-        90-es és 2000-es évek slágereit, szívküldi üzeneteket és a hallgatók által kért dalokat.
-        A műsort szavazások befolyásolják, így a közösség alakítja a rádiót.
-    </p>
-</section>
+<div id="liveStatus" class="offline">🔴 NINCS ÉLŐ ADÁS</div>
 
-<!-- 🔴 LIVE -->
-<section class="card" id="liveCard">
-    <h2>🔴 Élő adás</h2>
+<div class="wave"></div>
 
-    <p id="status">⚫ Nincs élő adás jelenleg</p>
+<p>
+Ez a TikTok Rádió! 🎶<br>
+Zene, szavazás, interakció – TE is része vagy!
+</p>
 
-    <!-- 🎧 hanghullám -->
-    <div id="wave" class="wave-container wave-off">
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-    </div>
+<hr>
 
-    <a href="https://tiktok.com" target="_blank" class="live-btn">
-        🎥 Csatlakozás a TikTok LIVE-hoz
-    </a>
-</section>
+<h2>💬 Üzenj a rádiónak</h2>
 
-<!-- 📅 MŰSOR -->
-<section class="card">
-    <h2>📅 Mai műsor</h2>
-    <div id="programListPublic">Betöltés...</div>
-</section>
+<input id="msgName" placeholder="Neved"><br>
+<textarea id="msgText" placeholder="Üzeneted"></textarea><br>
+<button onclick="sendMessage()">Küldés</button>
 
-<!-- 🗳️ FIX SZAVAZÁS -->
-<section class="card">
-    <h2>📊 Állandó szavazás</h2>
+<p id="msgStatus"></p>
 
-    <p>👉 Tetszik a TikTok Rádió?</p>
+<script>
+function sendMessage() {
+    const name = document.getElementById("msgName").value;
+    const text = document.getElementById("msgText").value;
 
-    <button onclick="voteFixed('A')">👍 Igen</button>
-    <button onclick="voteFixed('B')">👎 Nem</button>
-    <button onclick="voteFixed('C')">🤔 Van jövője</button>
+    if (!name || !text) {
+        document.getElementById("msgStatus").innerText = "Tölts ki minden mezőt!";
+        return;
+    }
 
-    <p id="fixedResult">Betöltés...</p>
-</section>
+    let messages = JSON.parse(localStorage.getItem("radioMessages")) || [];
 
-<!-- 🟣 NAPI SZAVAZÁS -->
-<section class="card">
-    <h2>🗳️ Napi szavazás</h2>
+    messages.push({
+        name: name,
+        text: text,
+        time: new Date().toLocaleString()
+    });
 
-    <p id="dailyQuestion">Betöltés...</p>
+    localStorage.setItem("radioMessages", JSON.stringify(messages));
 
-    <button onclick="voteDaily(0)" id="opt0">-</button>
-    <button onclick="voteDaily(1)" id="opt1">-</button>
-    <button onclick="voteDaily(2)" id="opt2">-</button>
+    document.getElementById("msgStatus").innerText = "Elküldve! 🎧";
 
-    <p id="dailyResult"></p>
-</section>
+    document.getElementById("msgName").value = "";
+    document.getElementById("msgText").value = "";
+}
 
-<!-- 📩 ELÉRHETŐSÉG -->
-<section class="card">
-    <h2>📩 Reklám / Kapcsolat</h2>
+/* LIVE állapot betöltése */
+function loadLive() {
+    const isLive = localStorage.getItem("radioLive");
 
-    <p id="contactInfo">Betöltés...</p>
+    const el = document.getElementById("liveStatus");
 
-    <a id="contactLink" class="live-btn" href="#">
-        📧 Üzenet küldése
-    </a>
-</section>
+    if (isLive === "true") {
+        el.innerText = "🔴 ÉLŐ ADÁS MOST!";
+        el.className = "live";
+    } else {
+        el.innerText = "🔴 NINCS ÉLŐ ADÁS";
+        el.className = "offline";
+    }
+}
 
-<script src="script.js"></script>
+loadLive();
+</script>
+
 </body>
 </html>
