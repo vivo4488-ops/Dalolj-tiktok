@@ -5,37 +5,22 @@
 <title>ADMIN</title>
 
 <style>
-body {
+body{
   font-family:Arial;
   background:#111;
   color:white;
   padding:20px;
 }
-
-.box {
+.box{
   background:#222;
-  padding:20px;
   margin:20px 0;
-  border-radius:10px;
+  padding:15px;
 }
-
-input, textarea {
-  width:100%;
+button{
   padding:10px;
-  margin:5px 0;
-}
-
-button {
-  padding:8px 15px;
-  margin:5px;
-  cursor:pointer;
-}
-
-.item {
-  background:#333;
-  padding:10px;
-  margin:5px 0;
-  border-radius:5px;
+  background:#00ccff;
+  border:none;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -44,23 +29,7 @@ button {
 
 <h1>🎛️ ADMIN PANEL</h1>
 
-<div class="box">
-<h2>🔥 Napi szavazás</h2>
-
-<input id="q" placeholder="Kérdés">
-<input id="o1" placeholder="Opció 1">
-<input id="o2" placeholder="Opció 2">
-
-<button onclick="saveDaily()">Mentés</button>
-</div>
-
-<div class="box">
-<h2>📅 Tematika</h2>
-
-<textarea id="prog" placeholder="Soronként egy műsor"></textarea>
-<button onclick="saveProg()">Mentés</button>
-
-</div>
+<button onclick="load()">Frissítés</button>
 
 <div class="box">
 <h2>📩 Üzenetek</h2>
@@ -74,88 +43,6 @@ button {
 
 <script>
 
-// ===== BETÖLTÉS =====
-
-// napi szavazás betöltés
-let daily = JSON.parse(localStorage.getItem("daily"));
-if(daily){
-  document.getElementById("q").value = daily.q;
-  document.getElementById("o1").value = daily.options[0];
-  document.getElementById("o2").value = daily.options[1];
-}
-
-// tematika betöltés
-let program = JSON.parse(localStorage.getItem("program"));
-if(program){
-  document.getElementById("prog").value = program.join("\n");
-}
-
-// üzenetek betöltése
-function loadMessages(){
-  let m = JSON.parse(localStorage.getItem("m")||"[]");
-  let html="";
-  m.forEach((msg,i)=>{
-    html += `<div class="item">${msg}
-      <button onclick="delMsg(${i})">Törlés</button>
-    </div>`;
-  });
-  document.getElementById("messages").innerHTML = html;
-}
-
-// zenék betöltése
-function loadSongs(){
-  let s = JSON.parse(localStorage.getItem("s")||"[]");
-  let html="";
-  s.forEach((song,i)=>{
-    html += `<div class="item">${song}
-      <button onclick="delSong(${i})">Törlés</button>
-    </div>`;
-  });
-  document.getElementById("songs").innerHTML = html;
-}
-
-// ===== MENTÉS =====
-
-function saveDaily(){
-  let data={
-    q:document.getElementById("q").value,
-    options:[
-      document.getElementById("o1").value,
-      document.getElementById("o2").value
-    ]
-  };
-  localStorage.setItem("daily",JSON.stringify(data));
-  alert("Mentve!");
-}
-
-function saveProg(){
-  let p=document.getElementById("prog").value.split("\n");
-  localStorage.setItem("program",JSON.stringify(p));
-  alert("Mentve!");
-}
-
-// ===== TÖRLÉS =====
-
-function delMsg(i){
-  let m = JSON.parse(localStorage.getItem("m")||"[]");
-  m.splice(i,1);
-  localStorage.setItem("m",JSON.stringify(m));
-  loadMessages();
-}
-
-function delSong(i){
-  let s = JSON.parse(localStorage.getItem("s")||"[]");
-  s.splice(i,1);
-  localStorage.setItem("s",JSON.stringify(s));
-  loadSongs();
-}
-
-// induláskor betölt
-loadMessages();
-loadSongs();
-
-</script>
-<script>
 const API = "https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
 
 function load(){
@@ -165,14 +52,18 @@ function load(){
     let msg="", song="";
 
     data.forEach(row=>{
-      if(row[0]==="message") msg += row[1]+"<br>";
-      if(row[0]==="song") song += row[1]+"<br>";
+      if(row[0]==="message") msg += "💬 "+row[1]+"<br>";
+      if(row[0]==="song") song += "🎵 "+row[1]+"<br>";
     });
 
     document.getElementById("messages").innerHTML = msg;
     document.getElementById("songs").innerHTML = song;
   });
 }
+
+load();
+
 </script>
+
 </body>
 </html>
