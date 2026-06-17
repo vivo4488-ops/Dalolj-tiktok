@@ -10,11 +10,11 @@ margin:0;
 font-family:Arial;
 color:white;
 text-align:center;
-background: radial-gradient(circle,#0b1a3a,#000);
+background: radial-gradient(circle,#0a1a3a,#000);
 overflow-x:hidden;
 }
 
-/* animált háttér */
+/* háttér */
 .bg{
 position:fixed;
 width:200%;
@@ -31,14 +31,13 @@ z-index:-1;
 100%{transform:rotate(360deg);}
 }
 
-/* neon LIVE */
+/* LIVE */
 #live{
-font-size:28px;
+font-size:26px;
 margin:15px auto;
 padding:20px;
 width:80%;
 border-radius:15px;
-transition:0.3s;
 }
 
 .onair{
@@ -49,16 +48,13 @@ animation:pulse 1s infinite;
 
 .offair{
 background:#222;
-box-shadow:none;
 }
 
 @keyframes pulse{
-0%{transform:scale(1);}
 50%{transform:scale(1.05);}
-100%{transform:scale(1);}
 }
 
-/* boxok */
+/* box */
 section{
 margin:15px auto;
 width:90%;
@@ -66,7 +62,7 @@ max-width:700px;
 padding:15px;
 background:rgba(255,255,255,0.06);
 border-radius:12px;
-backdrop-filter: blur(8px);
+backdrop-filter: blur(6px);
 }
 
 button{
@@ -107,9 +103,7 @@ margin:10px 0;
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<!-- LIVE -->
 <div id="live" class="offair">⚫ OFF AIR</div>
-
 <div class="wave"></div>
 
 <!-- BEMUTATKOZÁS -->
@@ -118,18 +112,19 @@ margin:10px 0;
 <p>
 A <b>TikTok Rádió Lacival</b> egy élő TikTok rádió 🎙️<br><br>
 
-🔥 Élő adások TikTok LIVE-on<br>
-🎵 Zenekérések és dalok<br>
+🔥 LIVE adások TikTokon<br>
+🎵 Zenekérések és mixek<br>
 💌 Szívküldi üzenetek<br>
-📊 Szavazások minden nap<br>
-📢 Reklám és üzenet lehetőség<br>
+📊 Napi és állandó szavazások<br>
+📢 Reklám lehetőség<br>
+📞 Kapcsolat és elérhetőség<br>
 </p>
 </section>
 
 <!-- ÁLLANDÓ SZAVAZÁS -->
 <section>
 <h2>📊 Állandó szavazás</h2>
-<p>Tetszik a TikTok rádió?</p>
+<p>Tetszik a rádió?</p>
 <button onclick="voteFixed('igen')">Igen</button>
 <button onclick="voteFixed('nem')">Nem</button>
 <button onclick="voteFixed('jovo')">Van jövője</button>
@@ -156,30 +151,27 @@ A <b>TikTok Rádió Lacival</b> egy élő TikTok rádió 🎙️<br><br>
 
 <!-- REKLÁM -->
 <section>
-<h2>📢 Reklám / együttműködés</h2>
-<input id="ad" placeholder="Reklám kérése">
+<h2>📢 Reklámkérés</h2>
+<input id="ad" placeholder="Reklám üzenet"><br>
 <button onclick="sendAd()">Küldés</button>
 </section>
 
 <!-- ELÉRHETŐSÉG -->
 <section>
 <h2>📞 Elérhetőség</h2>
-<p>
-Email: radio@tiktok.hu<br>
-TikTok: @tiktokradio_lacival
-</p>
+<p id="contactBox">Betöltés...</p>
 </section>
 
 <script>
 
-/* LIVE CONTROL */
+/* LIVE */
 let live = false;
 
 function updateLive(){
 let el = document.getElementById("live");
 
 if(live){
-el.innerHTML="🔴 ON AIR LIVE A TIKTOKON";
+el.innerHTML="🔴 ON AIR LIVE";
 el.className="onair";
 }else{
 el.innerHTML="⚫ OFF AIR";
@@ -202,9 +194,9 @@ document.getElementById("fixedResult").innerText =
 const today = new Date().getDate();
 const qList = [
 "Melyik zene legyen ma?",
-"Milyen hangulat legyen?",
 "Tetszik az adás?",
-"Maradjunk élőben?"
+"Milyen hangulat legyen?",
+"Maradjon a rádió?"
 ];
 
 document.getElementById("dailyQ").innerText =
@@ -217,13 +209,37 @@ document.getElementById("dailyResult").innerText="Mentve: "+v;
 
 /* ÜZENET */
 function sendMsg(){
-alert("Üzenet elküldve (demo)");
+let msgs = JSON.parse(localStorage.getItem("messages")) || [];
+msgs.push({name:name.value,msg:msg.value});
+localStorage.setItem("messages",JSON.stringify(msgs));
+
+alert("Üzenet elküldve ✔");
 }
 
 /* REKLÁM */
 function sendAd(){
-alert("Reklám kérés elküldve (demo)");
+let ads = JSON.parse(localStorage.getItem("ads")) || [];
+ads.push(ad.value);
+localStorage.setItem("ads",JSON.stringify(ads));
+
+alert("Reklám elküldve ✔");
 }
+
+/* ELÉRHETŐSÉG */
+function loadContact(){
+let c = JSON.parse(localStorage.getItem("contact"));
+
+if(!c){
+document.getElementById("contactBox").innerText =
+"Nincs beállított elérhetőség";
+return;
+}
+
+document.getElementById("contactBox").innerHTML =
+`📧 Email: ${c.email || "-"}<br>🎵 TikTok: ${c.tiktok || "-"}`;
+}
+
+loadContact();
 
 </script>
 
