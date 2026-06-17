@@ -10,9 +10,9 @@ body {
   font-family:Arial;
   color:white;
   text-align:center;
-  background: linear-gradient(-45deg, #001f4d, #0033cc, #000, #001f4d);
-  background-size:400% 400%;
-  animation:bg 12s infinite;
+  background: linear-gradient(270deg, #001f4d, #0033cc, #001f4d);
+  background-size: 300% 300%;
+  animation: bg 25s ease infinite;
 }
 
 @keyframes bg {
@@ -21,36 +21,22 @@ body {
   100%{background-position:0%}
 }
 
-h1 {
-  margin-top:20px;
+.box {
+  background:rgba(255,255,255,0.1);
+  margin:20px;
+  padding:20px;
+  border-radius:15px;
 }
 
 /* ON AIR */
 #onair {
   font-size:50px;
   margin:20px;
+  color:red;
+  text-shadow:0 0 20px red;
   cursor:pointer;
 }
 
-.on {
-  color:red;
-  text-shadow:0 0 20px red,0 0 40px red;
-}
-
-.off {
-  color:#666;
-}
-
-/* BOX */
-.box {
-  background:rgba(255,255,255,0.1);
-  margin:20px;
-  padding:20px;
-  border-radius:15px;
-  backdrop-filter:blur(10px);
-}
-
-/* INPUT */
 input, textarea {
   width:80%;
   padding:10px;
@@ -59,7 +45,6 @@ input, textarea {
   border:none;
 }
 
-/* BUTTON */
 button {
   padding:10px 20px;
   border:none;
@@ -68,37 +53,9 @@ button {
   cursor:pointer;
 }
 
-/* WAVE */
-.wave {
-  margin:20px;
-}
-
-.bar {
-  width:6px;
-  display:inline-block;
-  margin:2px;
-  background:#00ffff;
-  animation:wave 1s infinite;
-  box-shadow:0 0 10px #00ffff;
-}
-
-.bar:nth-child(1){animation-delay:0s;}
-.bar:nth-child(2){animation-delay:0.2s;}
-.bar:nth-child(3){animation-delay:0.4s;}
-.bar:nth-child(4){animation-delay:0.6s;}
-.bar:nth-child(5){animation-delay:0.8s;}
-
-@keyframes wave {
-  0%{height:10px}
-  50%{height:60px}
-  100%{height:10px}
-}
-
-/* LIST */
-.list {
-  text-align:left;
-  max-width:400px;
-  margin:auto;
+.small {
+  font-size:14px;
+  opacity:0.8;
 }
 </style>
 </head>
@@ -107,28 +64,22 @@ button {
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="onair" class="on" onclick="toggleAir()">🔴 ON AIR</div>
-
-<div class="wave">
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-</div>
+<div id="onair" onclick="toggleAir()">🔴 ON AIR</div>
 
 <div class="box">
-<h2>📻 Bemutatkozás</h2>
+<h2>📻 Miről szól a rádió?</h2>
 <p>
-Üdvözöllek a TikTok Rádióban! 🎶  
-Ez egy élő, interaktív rádió, ahol a hallgatók is részei a műsornak.  
-Küldhetsz üzenetet, kérhetsz zenét, és részt vehetsz a szavazásokban.  
-A legjobb üzenetek és kívánságok adásba kerülnek!
+Ez egy interaktív TikTok rádió, ahol a hallgatók is részt vesznek a műsorban.
+Küldhetsz üzenetet szeretteidnek, kérhetsz zenét a kívánságműsorhoz,
+és szavazhatsz, hogy milyen hangulat legyen az adásban.
 </p>
 </div>
 
 <div class="box">
 <h2>🗳️ Fix szavazás</h2>
+<p class="small">
+Ez a szavazás folyamatosan fut. Azt mutatja meg, hogy általában milyen zenei stílust szerettek a hallgatók.
+</p>
 <button onclick="vote('Pop')">Pop</button>
 <button onclick="vote('Retro')">Retro</button>
 <button onclick="vote('Mulatós')">Mulatós</button>
@@ -137,30 +88,35 @@ A legjobb üzenetek és kívánságok adásba kerülnek!
 
 <div class="box">
 <h2>🔥 Napi szavazás</h2>
-<p id="dailyQ">Mi menjen ma este?</p>
-<button onclick="dailyVote('Bulizós')">Bulizós</button>
-<button onclick="dailyVote('Lassú')">Lassú</button>
+<p id="dailyQ"></p>
+<p class="small">
+Ez a szavazás minden nap változik, és az aktuális műsor hangulatát befolyásolja.
+</p>
+<div id="dailyBtns"></div>
 <p id="dailyRes"></p>
 </div>
 
 <div class="box">
 <h2>📅 Mai tematika</h2>
-<div class="list">
-<p>13:00 - 14:00 → Hazai slágerek</p>
-<p>14:00 - 15:00 → Üzenetek beolvasása</p>
-<p>15:00 - 16:00 → Kívánságműsor</p>
-</div>
+<div id="program"></div>
 </div>
 
 <div class="box">
-<h2>📩 Üzenet</h2>
-<textarea id="msg"></textarea><br>
+<h2>📩 Üzenet küldése</h2>
+<p class="small">
+Ide névvel írhatsz üzenetet annak, akit szeretsz vagy kedvelsz.
+Az üzenetek beolvasásra kerülnek az adásban.
+</p>
+<textarea id="msg" placeholder="Pl: Szeretlek Anna! - Péter"></textarea><br>
 <button onclick="sendMessage()">Küldés</button>
 </div>
 
 <div class="box">
 <h2>🎵 Zenekérés</h2>
-<input id="song"><br>
+<p class="small">
+Ide csak zenét írj! Ezek a kívánságműsorban kerülnek lejátszásra.
+</p>
+<input id="song" placeholder="Előadó - szám"><br>
 <button onclick="requestSong()">Kérés</button>
 </div>
 
@@ -173,15 +129,7 @@ A legjobb üzenetek és kívánságok adásba kerülnek!
 // ON AIR
 function toggleAir(){
   let el=document.getElementById("onair");
-  if(el.classList.contains("on")){
-    el.classList.remove("on");
-    el.classList.add("off");
-    el.innerText="⚫ OFF AIR";
-  } else {
-    el.classList.remove("off");
-    el.classList.add("on");
-    el.innerText="🔴 ON AIR";
-  }
+  el.innerText = el.innerText.includes("ON") ? "⚫ OFF AIR" : "🔴 ON AIR";
 }
 
 // FIX SZAVAZÁS
@@ -192,38 +140,49 @@ function vote(v){
     `Pop:${votes.Pop} | Retro:${votes.Retro} | Mulatós:${votes.Mulatós}`;
 }
 
-// NAPI SZAVAZÁS
-let dVotes={Bulizós:0,Lassú:0};
+// NAPI SZAVAZÁS BETÖLTÉS
+let daily = JSON.parse(localStorage.getItem("daily")) || {
+  q:"Milyen zene menjen?",
+  options:["Bulizós","Lassú"]
+};
+
+document.getElementById("dailyQ").innerText = daily.q;
+
+let btns="";
+daily.options.forEach(o=>{
+  btns += `<button onclick="dailyVote('${o}')">${o}</button>`;
+});
+document.getElementById("dailyBtns").innerHTML = btns;
+
+let dVotes={};
 function dailyVote(v){
-  dVotes[v]++;
-  document.getElementById("dailyRes").innerText =
-    `Bulizós:${dVotes.Bulizós} | Lassú:${dVotes.Lassú}`;
+  dVotes[v]=(dVotes[v]||0)+1;
+  document.getElementById("dailyRes").innerText = JSON.stringify(dVotes);
 }
+
+// TEMATIKA
+let program = JSON.parse(localStorage.getItem("program")) || [
+"13:00 - 14:00 Hazai slágerek",
+"14:00 - 15:00 Üzenetek",
+"15:00 - 16:00 Kívánságműsor"
+];
+
+document.getElementById("program").innerHTML = program.join("<br>");
 
 // ÜZENET
 function sendMessage(){
-  let msg=document.getElementById("msg").value;
-  if(!msg) return alert("Írj valamit");
-
   let m=JSON.parse(localStorage.getItem("m")||"[]");
-  m.push(msg);
+  m.push(document.getElementById("msg").value);
   localStorage.setItem("m",JSON.stringify(m));
-
-  alert("Elküldve!");
-  document.getElementById("msg").value="";
+  alert("Elküldve");
 }
 
 // ZENE
 function requestSong(){
-  let song=document.getElementById("song").value;
-  if(!song) return alert("Írj zenét");
-
   let s=JSON.parse(localStorage.getItem("s")||"[]");
-  s.push(song);
+  s.push(document.getElementById("song").value);
   localStorage.setItem("s",JSON.stringify(s));
-
-  alert("Elküldve!");
-  document.getElementById("song").value="";
+  alert("Elküldve");
 }
 </script>
 
