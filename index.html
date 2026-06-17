@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió Lacival</title>
+<title>TikTok Rádió</title>
 
 <style>
 body{
@@ -26,69 +26,49 @@ body{
   margin:15px;
   padding:15px;
   border-radius:15px;
-  backdrop-filter: blur(5px);
 }
 
 #onair{
   font-size:40px;
-  color:red;
-  text-shadow:0 0 20px red;
   font-weight:bold;
-  animation:blink 1s infinite alternate;
+  text-shadow:0 0 20px red;
 }
 
-@keyframes blink{
-  from{opacity:1}
-  to{opacity:0.4}
+button{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#00ccff;
+  cursor:pointer;
+  margin:5px;
 }
 
 input,textarea{
   width:80%;
   padding:10px;
-  border-radius:10px;
-  border:none;
-  margin:8px;
-}
-
-button{
-  padding:10px 20px;
-  border:none;
-  border-radius:10px;
-  background:#00ccff;
-  cursor:pointer;
-}
-
-a{
-  color:#00ccff;
+  margin:5px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎧 TikTok Rádió Lacival</h1>
+<h1>🎧 TikTok Rádió</h1>
 
 <div id="onair">🔴 ON AIR</div>
 
 <div class="box">
-<h2>📻 Rádió bemutatása</h2>
-<p>
-Ez egy élő, közösségi rádió, ahol a hallgatók alakítják a műsort.
-Üzenetek, zenekérések és szavazások alapján változik a hangulat.
-</p>
+<h2>📻 Rádió leírás</h2>
+<p>Interaktív rádió: üzenet, zene, szavazás, tematika.</p>
 </div>
 
 <div class="box">
-<h2>📅 Műsor tematika</h2>
-<p>
-13:00–14:00 → Hazai slágerek<br>
-14:00–15:00 → Üzenetek beolvasása<br>
-15:00–16:00 → Kívánságműsor
-</p>
+<h2>📅 Tematika</h2>
+<div id="theme">Betöltés...</div>
 </div>
 
 <div class="box">
-<h2>📩 Üzenet (szeretteidnek)</h2>
+<h2>📩 Üzenet</h2>
 <textarea id="msg"></textarea><br>
 <button onclick="send('message')">Küldés</button>
 </div>
@@ -100,17 +80,29 @@ Ez egy élő, közösségi rádió, ahol a hallgatók alakítják a műsort.
 </div>
 
 <div class="box">
+<h2>🗳 FIX SZAVAZÁS</h2>
+<button onclick="vote('A')">A opció</button>
+<button onclick="vote('B')">B opció</button>
+<div id="fixedResult"></div>
+</div>
+
+<div class="box">
+<h2>🗳 NAPI SZAVAZÁS</h2>
+<div id="dailyQuestion">Betöltés...</div>
+<button onclick="voteDaily('A')">A</button>
+<button onclick="voteDaily('B')">B</button>
+</div>
+
+<div class="box">
 <h2>📞 Kapcsolat</h2>
-<p>
-Reklám, észrevétel, együttműködés:<br>
-<a href="mailto:kohegyim44@gmail.com">kohegyim44@gmail.com</a>
-</p>
+<p>kohegyim44@gmail.com</p>
 </div>
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
+const API="https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
 
+// Üzenet + zene
 function send(type){
   let text = type==="message"
     ? document.getElementById("msg").value
@@ -118,11 +110,63 @@ function send(type){
 
   fetch(API,{
     method:"POST",
-    body: JSON.stringify({type,text})
+    body:JSON.stringify({type,text})
   });
 
   alert("Elküldve!");
 }
+
+// FIX szavazás
+function vote(v){
+  fetch(API,{
+    method:"POST",
+    body:JSON.stringify({type:"vote_fixed",text:v})
+  });
+}
+
+// NAPI szavazás
+function voteDaily(v){
+  fetch(API,{
+    method:"POST",
+    body:JSON.stringify({type:"vote_daily",text:v})
+  });
+}
+
+// Betöltés
+function load(){
+  fetch(API)
+  .then(r=>r.json())
+  .then(data=>{
+
+    let status="offair";
+    let theme="";
+    let q="";
+
+    let a=0,b=0;
+
+    data.forEach(r=>{
+      if(r[0]==="status") status=r[1];
+      if(r[0]==="theme") theme=r[1];
+      if(r[0]==="daily_question") q=r[1];
+
+      if(r[0]==="vote_fixed_A") a++;
+      if(r[0]==="vote_fixed_B") b++;
+    });
+
+    document.getElementById("onair").innerText =
+      status==="onair" ? "🔴 ON AIR" : "⚫ OFF AIR";
+
+    document.getElementById("theme").innerHTML = theme;
+
+    document.getElementById("dailyQuestion").innerHTML = q;
+
+    document.getElementById("fixedResult").innerHTML =
+      "A: "+a+" | B: "+b;
+  });
+}
+
+load();
+setInterval(load,5000);
 
 </script>
 
