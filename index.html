@@ -2,7 +2,7 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió</title>
+<title>Online Rádió</title>
 
 <style>
 body{
@@ -12,7 +12,7 @@ body{
   text-align:center;
   background: linear-gradient(270deg,#001133,#0033cc,#000);
   background-size:400% 400%;
-  animation:bg 15s ease infinite;
+  animation:bg 16s ease infinite;
 }
 
 @keyframes bg{
@@ -26,40 +26,46 @@ body{
   margin:15px;
   padding:15px;
   border-radius:15px;
+  backdrop-filter: blur(6px);
 }
 
 #onair{
-  font-size:40px;
+  font-size:42px;
   font-weight:bold;
   text-shadow:0 0 20px red;
-}
-
-button{
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:#00ccff;
-  cursor:pointer;
-  margin:5px;
+  margin:10px;
 }
 
 input,textarea{
   width:80%;
   padding:10px;
-  margin:5px;
+  margin:6px;
+  border-radius:10px;
+  border:none;
+}
+
+button{
+  padding:10px 18px;
+  border:none;
+  border-radius:10px;
+  background:#00ccff;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎧 TikTok Rádió</h1>
+<h1>🎧 Online Rádió</h1>
 
 <div id="onair">🔴 ON AIR</div>
 
 <div class="box">
-<h2>📻 Rádió leírás</h2>
-<p>Interaktív rádió: üzenet, zene, szavazás, tematika.</p>
+<h2>📻 Rádió bemutatása</h2>
+<p>
+Ez egy interaktív rádió, ahol a hallgatók üzenhetnek, zenét kérhetnek,
+és szavazásokkal befolyásolják a műsort.
+</p>
 </div>
 
 <div class="box">
@@ -68,7 +74,7 @@ input,textarea{
 </div>
 
 <div class="box">
-<h2>📩 Üzenet</h2>
+<h2>📩 Üzenet (szeretteidnek)</h2>
 <textarea id="msg"></textarea><br>
 <button onclick="send('message')">Küldés</button>
 </div>
@@ -81,14 +87,14 @@ input,textarea{
 
 <div class="box">
 <h2>🗳 FIX SZAVAZÁS</h2>
-<button onclick="vote('A')">A opció</button>
-<button onclick="vote('B')">B opció</button>
+<button onclick="vote('A')">A</button>
+<button onclick="vote('B')">B</button>
 <div id="fixedResult"></div>
 </div>
 
 <div class="box">
 <h2>🗳 NAPI SZAVAZÁS</h2>
-<div id="dailyQuestion">Betöltés...</div>
+<div id="dailyQ">Betöltés...</div>
 <button onclick="voteDaily('A')">A</button>
 <button onclick="voteDaily('B')">B</button>
 </div>
@@ -102,7 +108,6 @@ input,textarea{
 
 const API="https://script.google.com/macros/s/AKfycbxmW5sHGEYVeoneaGPEoK4w8FlazjOblmOjQelxeAfITT1lU4aZ_0MHd_Vujq9Q9rftpg/exec";
 
-// Üzenet + zene
 function send(type){
   let text = type==="message"
     ? document.getElementById("msg").value
@@ -116,7 +121,6 @@ function send(type){
   alert("Elküldve!");
 }
 
-// FIX szavazás
 function vote(v){
   fetch(API,{
     method:"POST",
@@ -124,7 +128,6 @@ function vote(v){
   });
 }
 
-// NAPI szavazás
 function voteDaily(v){
   fetch(API,{
     method:"POST",
@@ -132,22 +135,20 @@ function voteDaily(v){
   });
 }
 
-// Betöltés
 function load(){
   fetch(API)
   .then(r=>r.json())
-  .then(data=>{
+  .then(d=>{
 
     let status="offair";
     let theme="";
-    let q="";
-
+    let dq="";
     let a=0,b=0;
 
-    data.forEach(r=>{
+    d.forEach(r=>{
       if(r[0]==="status") status=r[1];
       if(r[0]==="theme") theme=r[1];
-      if(r[0]==="daily_question") q=r[1];
+      if(r[0]==="daily_question") dq=r[1];
 
       if(r[0]==="vote_fixed_A") a++;
       if(r[0]==="vote_fixed_B") b++;
@@ -157,8 +158,7 @@ function load(){
       status==="onair" ? "🔴 ON AIR" : "⚫ OFF AIR";
 
     document.getElementById("theme").innerHTML = theme;
-
-    document.getElementById("dailyQuestion").innerHTML = q;
+    document.getElementById("dailyQ").innerHTML = dq;
 
     document.getElementById("fixedResult").innerHTML =
       "A: "+a+" | B: "+b;
