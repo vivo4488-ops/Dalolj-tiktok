@@ -1,61 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
 <meta charset="UTF-8">
 <title>ADMIN</title>
-</head>
-<body style="background:black;color:white;text-align:center">
 
-<h1>ADMIN PANEL</h1>
-
-<button onclick="setOnAir(true)">ON AIR</button>
-<button onclick="setOnAir(false)">OFF AIR</button>
-
-<h2>Üzenetek</h2>
-<div id="messages"></div>
-
-<h2>Zenék</h2>
-<div id="songs"></div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "IDE",
-  authDomain: "IDE",
-  databaseURL: "IDE",
-  projectId: "IDE",
-  storageBucket: "IDE",
-  messagingSenderId: "IDE",
-  appId: "IDE"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ON AIR
-function setOnAir(v){
-  db.ref("onAir").set(v);
+<style>
+body {
+  font-family: Arial;
+  background:#111;
+  color:white;
+  padding:20px;
 }
 
-// ÜZENETEK
-db.ref("messages").on("value", snap=>{
-  let html="";
-  snap.forEach(c=>{
-    html += "<p>"+c.val().text+"</p>";
-  });
-  document.getElementById("messages").innerHTML=html;
-});
+.box {
+  background:#222;
+  padding:15px;
+  margin:15px 0;
+  border-radius:10px;
+}
 
-// ZENÉK
-db.ref("songs").on("value", snap=>{
-  let html="";
-  snap.forEach(c=>{
-    html += "<p>"+c.val().text+"</p>";
+button {
+  padding:10px;
+  margin:5px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔧 ADMIN PANEL</h1>
+
+<button onclick="loadData()">Frissítés</button>
+<button onclick="clearAll()">Összes törlése</button>
+
+<div class="box">
+<h2>📩 Üzenetek</h2>
+<div id="messages"></div>
+</div>
+
+<div class="box">
+<h2>🎵 Zenekérések</h2>
+<div id="songs"></div>
+</div>
+
+<script>
+function loadData(){
+  const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+  const songs = JSON.parse(localStorage.getItem("songs") || "[]");
+
+  let mHTML = "";
+  messages.forEach(m => {
+    mHTML += "<p>🕒 " + m.time + "<br>💬 " + m.text + "</p><hr>";
   });
-  document.getElementById("songs").innerHTML=html;
-});
+  document.getElementById("messages").innerHTML = mHTML;
+
+  let sHTML = "";
+  songs.forEach(s => {
+    sHTML += "<p>🕒 " + s.time + "<br>🎵 " + s.text + "</p><hr>";
+  });
+  document.getElementById("songs").innerHTML = sHTML;
+}
+
+function clearAll(){
+  if(confirm("Biztos törlöd?")){
+    localStorage.clear();
+    loadData();
+  }
+}
+
+loadData();
 </script>
 
 </body>
