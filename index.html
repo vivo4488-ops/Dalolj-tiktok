@@ -33,7 +33,6 @@ body{
   font-size:42px;
   font-weight:bold;
   text-shadow:0 0 20px red;
-  margin:10px;
 }
 
 input,textarea{
@@ -61,10 +60,10 @@ button{
 <div id="onair">🔴 ON AIR</div>
 
 <div class="box">
-<h2>📻 Rádió bemutatása</h2>
+<h2>📻 Rádió bemutató</h2>
 <p>
-Ez egy interaktív rádió, ahol a hallgatók üzenhetnek, zenét kérhetnek,
-és szavazásokkal befolyásolják a műsort.
+Interaktív rádió: üzenet, zene, szavazás, tematika.
+A hallgatók alakítják a műsort.
 </p>
 </div>
 
@@ -74,7 +73,7 @@ Ez egy interaktív rádió, ahol a hallgatók üzenhetnek, zenét kérhetnek,
 </div>
 
 <div class="box">
-<h2>📩 Üzenet (szeretteidnek)</h2>
+<h2>📩 Üzenet (anonim)</h2>
 <textarea id="msg"></textarea><br>
 <button onclick="send('message')">Küldés</button>
 </div>
@@ -86,7 +85,7 @@ Ez egy interaktív rádió, ahol a hallgatók üzenhetnek, zenét kérhetnek,
 </div>
 
 <div class="box">
-<h2>🗳 FIX SZAVAZÁS</h2>
+<h2>🗳 FIX SZAVAZÁS (A/B)</h2>
 <button onclick="vote('A')">A</button>
 <button onclick="vote('B')">B</button>
 <div id="fixedResult"></div>
