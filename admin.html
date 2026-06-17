@@ -2,23 +2,26 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Admin - TikTok Rádió Lacival</title>
+<title>ADMIN - TikTok Rádió</title>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#0b1230;
+background:#111;
 color:white;
 text-align:center;
 }
 
 section{
-margin:20px auto;
+margin:15px auto;
 width:90%;
 max-width:700px;
 padding:15px;
-background:rgba(255,255,255,0.06);
+background:#222;
 border-radius:10px;
 }
 
@@ -26,96 +29,56 @@ button{
 padding:10px;
 margin:5px;
 cursor:pointer;
-border:none;
-border-radius:8px;
-background:#00aaff;
-color:white;
-}
-
-.on{background:green;}
-.off{background:red;}
-
-.box{
-border:1px solid gray;
-margin:5px;
-padding:5px;
-text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🔐 ADMIN PANEL - TikTok Rádió</h1>
+<h1>🔐 ADMIN PANEL</h1>
 
-<!-- LIVE CONTROL -->
 <section>
 <h2>🎧 LIVE vezérlés</h2>
-<button onclick="setLive(true)" class="on">ON AIR</button>
-<button onclick="setLive(false)" class="off">OFF AIR</button>
-<p id="liveStatus"></p>
+<button onclick="setLive('on')">ON AIR</button>
+<button onclick="setLive('off')">OFF AIR</button>
 </section>
 
-<!-- ÜZENETEK -->
 <section>
 <h2>💬 Üzenetek</h2>
-<div id="messages"></div>
-</section>
-
-<!-- REKLÁMOK -->
-<section>
-<h2>📢 Reklám kérések</h2>
-<div id="ads"></div>
-</section>
-
-<!-- ZENEKÉRÉSEK -->
-<section>
-<h2>🎵 Zenekérések</h2>
-<div id="songs"></div>
+<div id="msgs"></div>
 </section>
 
 <script>
 
-/* LIVE CONTROL (LOCAL) */
-function setLive(v){
-localStorage.setItem("live", v ? "true" : "false");
-document.getElementById("liveStatus").innerText =
-v ? "🔴 ON AIR" : "⚫ OFF AIR";
+const firebaseConfig = {
+apiKey:"YOUR",
+authDomain:"YOUR",
+databaseURL:"YOUR",
+projectId:"YOUR",
+appId:"YOUR"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* LIVE */
+function setLive(state){
+db.ref("live").set(state);
 }
 
-/* BETÖLTÉS LIVE STATUS */
-document.getElementById("liveStatus").innerText =
-localStorage.getItem("live")==="true" ? "🔴 ON AIR" : "⚫ OFF AIR";
+/* ÜZENETEK */
+db.ref("messages").on("value",snap=>{
+let d=snap.val()||{};
+let box=document.getElementById("msgs");
+box.innerHTML="";
 
-/* DEMO ADATOK (ha később Firebase lesz, innen kötjük össze) */
-function loadData(){
-
-/* üzenetek */
-let msgs = JSON.parse(localStorage.getItem("messages")) || [];
-let msgBox = document.getElementById("messages");
-msgBox.innerHTML="";
-msgs.forEach(m=>{
-msgBox.innerHTML += `<div class="box"><b>${m.name}</b>: ${m.msg}</div>`;
-});
-
-/* reklám */
-let ads = JSON.parse(localStorage.getItem("ads")) || [];
-let adBox = document.getElementById("ads");
-adBox.innerHTML="";
-ads.forEach(a=>{
-adBox.innerHTML += `<div class="box">${a}</div>`;
-});
-
-/* zenék */
-let songs = JSON.parse(localStorage.getItem("songs")) || [];
-let songBox = document.getElementById("songs");
-songBox.innerHTML="";
-songs.forEach(s=>{
-songBox.innerHTML += `<div class="box">${s}</div>`;
-});
+for(let i in d){
+box.innerHTML+=`
+<div style="border:1px solid gray;margin:5px;padding:5px">
+<b>${d[i].name}</b>: ${d[i].msg}
+</div>`;
 }
-
-loadData();
+});
 
 </script>
 
