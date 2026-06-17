@@ -12,11 +12,11 @@ body {
     text-align: center;
 }
 
-/* LIVE jelzés */
+/* LIVE */
 #liveStatus {
-    font-size: 24px;
+    font-size: 26px;
+    padding: 15px;
     margin: 20px;
-    padding: 10px;
     border-radius: 10px;
 }
 
@@ -24,28 +24,25 @@ body {
     background: red;
     animation: glow 1s infinite alternate;
 }
-
-.offline {
-    background: gray;
-}
+.offline { background: gray; }
 
 @keyframes glow {
     from { box-shadow: 0 0 10px red; }
     to { box-shadow: 0 0 30px red; }
 }
 
-/* hullám animáció */
+/* wave */
 .wave {
-    width: 100%;
-    height: 50px;
+    height: 40px;
     background: linear-gradient(90deg, red, transparent);
     animation: waveMove 2s infinite linear;
 }
-
 @keyframes waveMove {
     from { transform: translateX(-100%); }
     to { transform: translateX(100%); }
 }
+
+section { margin-top: 40px; }
 
 input, textarea {
     padding: 10px;
@@ -53,6 +50,7 @@ input, textarea {
     border-radius: 5px;
     border: none;
 }
+
 button {
     padding: 10px 20px;
     cursor: pointer;
@@ -64,67 +62,133 @@ button {
 
 <h1>🎧 TikTok Rádió</h1>
 
-<div id="liveStatus" class="offline">🔴 NINCS ÉLŐ ADÁS</div>
-
+<div id="liveStatus">Betöltés...</div>
 <div class="wave"></div>
 
 <p>
-Ez a TikTok Rádió! 🎶<br>
-Zene, szavazás, interakció – TE is része vagy!
+🎶 Interaktív TikTok rádió!<br>
+Szavazz, írj üzenetet, és hallgasd LIVE!
 </p>
 
-<hr>
+<!-- TEMATIKA -->
+<section>
+<h2>📅 Műsor tematika</h2>
+<ul id="schedule"></ul>
+</section>
 
-<h2>💬 Üzenj a rádiónak</h2>
+<!-- ÁLLANDÓ SZAVAZÁS -->
+<section>
+<h2>📊 Tetszik a TikTok rádió?</h2>
+<button onclick="vote('igen')">Igen</button>
+<button onclick="vote('nem')">Nem</button>
+<button onclick="vote('jovo')">Van jövője</button>
 
+<p id="voteResult"></p>
+</section>
+
+<!-- NAPI KÉRDÉS -->
+<section>
+<h2>❓ Napi kérdés</h2>
+<p id="dailyQuestion"></p>
+<div id="dailyOptions"></div>
+</section>
+
+<!-- ÜZENET -->
+<section>
+<h2>💬 Üzenj</h2>
 <input id="msgName" placeholder="Neved"><br>
-<textarea id="msgText" placeholder="Üzeneted"></textarea><br>
+<textarea id="msgText" placeholder="Üzenet"></textarea><br>
 <button onclick="sendMessage()">Küldés</button>
-
 <p id="msgStatus"></p>
+</section>
+
+<!-- ELÉRHETŐSÉG -->
+<section>
+<h2>📢 Reklám / Kapcsolat</h2>
+<p id="contact"></p>
+</section>
 
 <script>
-function sendMessage() {
-    const name = document.getElementById("msgName").value;
-    const text = document.getElementById("msgText").value;
-
-    if (!name || !text) {
-        document.getElementById("msgStatus").innerText = "Tölts ki minden mezőt!";
-        return;
-    }
-
-    let messages = JSON.parse(localStorage.getItem("radioMessages")) || [];
-
-    messages.push({
-        name: name,
-        text: text,
-        time: new Date().toLocaleString()
-    });
-
-    localStorage.setItem("radioMessages", JSON.stringify(messages));
-
-    document.getElementById("msgStatus").innerText = "Elküldve! 🎧";
-
-    document.getElementById("msgName").value = "";
-    document.getElementById("msgText").value = "";
-}
-
-/* LIVE állapot betöltése */
+/* LIVE */
 function loadLive() {
-    const isLive = localStorage.getItem("radioLive");
-
+    const live = localStorage.getItem("radioLive");
     const el = document.getElementById("liveStatus");
 
-    if (isLive === "true") {
+    if (live === "true") {
         el.innerText = "🔴 ÉLŐ ADÁS MOST!";
         el.className = "live";
     } else {
-        el.innerText = "🔴 NINCS ÉLŐ ADÁS";
+        el.innerText = "⚫ NINCS ÉLŐ ADÁS";
         el.className = "offline";
     }
 }
 
+/* TEMATIKA */
+function loadSchedule() {
+    let data = JSON.parse(localStorage.getItem("schedule")) || [];
+    const ul = document.getElementById("schedule");
+    ul.innerHTML = "";
+
+    data.forEach(item => {
+        let li = document.createElement("li");
+        li.innerText = `${item.from} - ${item.to} | ${item.name}`;
+        ul.appendChild(li);
+    });
+}
+
+/* SZAVAZÁS */
+function vote(v) {
+    let votes = JSON.parse(localStorage.getItem("votes")) || {igen:0,nem:0,jovo:0};
+    votes[v]++;
+    localStorage.setItem("votes", JSON.stringify(votes));
+
+    document.getElementById("voteResult").innerText =
+        `Igen: ${votes.igen} | Nem: ${votes.nem} | Jövő: ${votes.jovo}`;
+}
+
+/* NAPI */
+function loadDaily() {
+    const q = localStorage.getItem("dailyQ");
+    const opts = JSON.parse(localStorage.getItem("dailyOpts")) || [];
+
+    document.getElementById("dailyQuestion").innerText = q || "Nincs kérdés";
+
+    const box = document.getElementById("dailyOptions");
+    box.innerHTML = "";
+
+    opts.forEach(o => {
+        let b = document.createElement("button");
+        b.innerText = o;
+        box.appendChild(b);
+    });
+}
+
+/* ÜZENET */
+function sendMessage() {
+    let name = msgName.value;
+    let text = msgText.value;
+
+    if (!name || !text) return msgStatus.innerText="Tölts ki mindent!";
+
+    let m = JSON.parse(localStorage.getItem("msgs")) || [];
+    m.push({name,text,time:new Date().toLocaleString()});
+    localStorage.setItem("msgs", JSON.stringify(m));
+
+    msgStatus.innerText="Elküldve!";
+    msgName.value=""; msgText.value="";
+}
+
+/* KONTAKT */
+function loadContact() {
+    document.getElementById("contact").innerText =
+        localStorage.getItem("contact") || "Nincs megadva";
+}
+
+/* INIT */
 loadLive();
+loadSchedule();
+loadDaily();
+loadContact();
 </script>
 
 </body>
