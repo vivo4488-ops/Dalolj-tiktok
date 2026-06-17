@@ -2,73 +2,40 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió Lacival</title>
+<title>TikTok Rádió</title>
 
 <style>
-body {
+body{
   margin:0;
-  font-family: Arial;
-  background: linear-gradient(270deg, #001f4d, #003399, #001f4d);
-  background-size: 600% 600%;
-  animation: bgMove 10s infinite;
+  font-family:Arial;
+  background:#001f4d;
   color:white;
   text-align:center;
 }
 
-@keyframes bgMove {
-  0%{background-position:0%}
-  50%{background-position:100%}
-  100%{background-position:0%}
-}
+h1{margin-top:20px;}
 
-#onair {
-  font-size:40px;
-  margin:20px;
-  text-shadow: 0 0 20px red;
-}
-
-.box {
-  background: rgba(255,255,255,0.1);
+.box{
+  background:#002b80;
   margin:20px;
   padding:20px;
-  border-radius:15px;
+  border-radius:10px;
 }
 
-input, textarea {
+input, textarea{
   width:80%;
   padding:10px;
   margin:10px;
-  border-radius:10px;
   border:none;
+  border-radius:5px;
 }
 
-button {
+button{
   padding:10px 20px;
   border:none;
-  border-radius:10px;
   background:#00ccff;
-  color:black;
   cursor:pointer;
-}
-
-.wave {
-  height:50px;
-  margin-top:20px;
-}
-
-.bar {
-  width:5px;
-  height:20px;
-  display:inline-block;
-  margin:2px;
-  background:white;
-  animation:wave 1s infinite;
-}
-
-@keyframes wave {
-  0%{height:10px}
-  50%{height:40px}
-  100%{height:10px}
+  border-radius:5px;
 }
 </style>
 
@@ -78,15 +45,8 @@ button {
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="onair">🔴 ON AIR</div>
-
-<div class="wave">
-  <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-  <div class="bar"></div><div class="bar"></div>
-</div>
-
 <div class="box">
-<h2>📩 Üzenet küldése</h2>
+<h2>📩 Üzenet</h2>
 <textarea id="msg"></textarea><br>
 <button onclick="sendMessage()">Küldés</button>
 </div>
@@ -99,31 +59,31 @@ button {
 
 <div class="box">
 <h2>📞 Kapcsolat</h2>
-<p>Email: kohegyim44@gmail.com</p>
+<p>kohegyim44@gmail.com</p>
 </div>
 
 <script>
 function sendMessage(){
-  const msg = document.getElementById("msg").value;
-  if(!msg) return alert("Írj valamit!");
+  const msg=document.getElementById("msg").value;
+  if(!msg) return alert("Írj valamit");
 
-  let messages = JSON.parse(localStorage.getItem("messages") || "[]");
-  messages.push({text: msg, time: new Date().toLocaleString()});
-  localStorage.setItem("messages", JSON.stringify(messages));
+  let m=JSON.parse(localStorage.getItem("m")||"[]");
+  m.push(msg);
+  localStorage.setItem("m",JSON.stringify(m));
 
-  alert("Elmentve!");
+  alert("OK");
   document.getElementById("msg").value="";
 }
 
 function requestSong(){
-  const song = document.getElementById("song").value;
-  if(!song) return alert("Írj zenét!");
+  const song=document.getElementById("song").value;
+  if(!song) return alert("Írj zenét");
 
-  let songs = JSON.parse(localStorage.getItem("songs") || "[]");
-  songs.push({text: song, time: new Date().toLocaleString()});
-  localStorage.setItem("songs", JSON.stringify(songs));
+  let s=JSON.parse(localStorage.getItem("s")||"[]");
+  s.push(song);
+  localStorage.setItem("s",JSON.stringify(s));
 
-  alert("Elmentve!");
+  alert("OK");
   document.getElementById("song").value="";
 }
 </script>
