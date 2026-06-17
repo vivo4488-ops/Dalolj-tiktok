@@ -6,7 +6,7 @@ function toggleLive() {
     alert(live ? "LIVE OFF" : "LIVE ON");
 }
 
-/* 📅 MŰSOR BETÖLTÉS */
+/* 📅 MŰSOR */
 function getProgram() {
     return JSON.parse(localStorage.getItem("program")) || [];
 }
@@ -16,13 +16,10 @@ function saveProgram(program) {
     render();
 }
 
-/* ➕ HOZZÁADÁS */
 function addProgram() {
     let from = document.getElementById("from").value;
     let to = document.getElementById("to").value;
     let desc = document.getElementById("desc").value;
-
-    if (!from || !to || !desc) return;
 
     let program = getProgram();
 
@@ -31,55 +28,47 @@ function addProgram() {
     saveProgram(program);
 }
 
-/* ❌ TÖRLÉS */
-function deleteProgram(index) {
+function deleteProgram(i) {
     let program = getProgram();
-
-    program.splice(index, 1);
-
+    program.splice(i, 1);
     saveProgram(program);
 }
 
-/* ✏️ SZERKESZTÉS */
-function editProgram(index) {
+function editProgram(i) {
     let program = getProgram();
-    let item = program[index];
+    let p = program[i];
 
-    document.getElementById("from").value = item.from;
-    document.getElementById("to").value = item.to;
-    document.getElementById("desc").value = item.desc;
+    document.getElementById("from").value = p.from;
+    document.getElementById("to").value = p.to;
+    document.getElementById("desc").value = p.desc;
 
-    deleteProgram(index);
+    deleteProgram(i);
 }
 
-/* 📋 LISTA */
 function render() {
     let list = document.getElementById("programList");
     list.innerHTML = "";
 
     let program = getProgram();
 
-    program.forEach((p, index) => {
+    program.forEach((p, i) => {
         let li = document.createElement("li");
-
         li.innerHTML = `
-            <strong>${p.from} - ${p.to}</strong> → ${p.desc}
-            <button onclick="editProgram(${index})">✏️</button>
-            <button onclick="deleteProgram(${index})">❌</button>
+            ${p.from} - ${p.to} → ${p.desc}
+            <button onclick="editProgram(${i})">✏️</button>
+            <button onclick="deleteProgram(${i})">❌</button>
         `;
-
         list.appendChild(li);
     });
 }
 
-/* 📊 FIX SZAVAZÁS TÉMA */
+/* 📊 FIX SZAVAZÁS */
 function setTopic() {
     let topic = document.getElementById("topicInput").value;
-    localStorage.setItem("topic", topic);
-    alert("Mentve!");
+    localStorage.setItem("fixedTopic", topic);
 }
 
-/* 🟣 NAPI SZAVAZÁS (maradhat) */
+/* 🟣 NAPI SZAVAZÁS */
 function setDaily() {
     let q = document.getElementById("q").value;
     let o1 = document.getElementById("o1").value;
@@ -90,7 +79,14 @@ function setDaily() {
     localStorage.setItem("dailyOptions", JSON.stringify([o1,o2,o3]));
     localStorage.setItem("dailyVotes", JSON.stringify([0,0,0]));
 
-    alert("Napi szavazás beállítva!");
+    alert("Mentve!");
+}
+
+/* 📩 ELÉRHETŐSÉG */
+function setContact() {
+    let c = document.getElementById("contactInput").value;
+    localStorage.setItem("contact", c);
+    alert("Elérhetőség mentve!");
 }
 
 render();
