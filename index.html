@@ -9,14 +9,28 @@
 
 <header>
     <h1>🎧 TikTok Rádió Lacival</h1>
-    <p>Élő műsor • Közösség • Zene • Kapcsolat</p>
+    <p>Élő műsor • Közösség • Zene • Szavazás</p>
 </header>
 
-<!-- 🔴 LIVE -->
+<!-- 📌 LEÍRÁS -->
 <section class="card">
-    <h2>🔴 LIVE</h2>
-    <p id="status">⚫ Nincs élő adás</p>
-    <a href="https://tiktok.com" target="_blank" class="live-btn">🎥 TikTok LIVE</a>
+    <h2>📻 Mi ez a TikTok Rádió?</h2>
+    <p>
+        Ez egy közösségi rádió, ahol TikTok LIVE adásokhoz kapcsolódó zenék, tematikus műsorok és szavazások zajlanak.
+        Hallhatsz 90-es és 2000-es évek zenéit, szívküldi üzeneteket, valamint a hallgatók által kért dalokat.
+        A műsor folyamatosan változik, a közösség pedig szavazásokkal befolyásolhatja a tartalmat.
+    </p>
+</section>
+
+<!-- 🔴 LIVE -->
+<section class="card" id="liveCard">
+    <h2>🔴 Élő adás</h2>
+
+    <p id="status" class="live-off">⚫ Nincs élő adás jelenleg</p>
+
+    <a href="https://tiktok.com" target="_blank" class="live-btn">
+        🎥 Csatlakozás a TikTok LIVE-hoz
+    </a>
 </section>
 
 <!-- 📅 MŰSOR -->
@@ -28,6 +42,7 @@
 <!-- 🗳️ FIX SZAVAZÁS -->
 <section class="card">
     <h2>📊 Állandó szavazás</h2>
+
     <p>👉 Tetszik a TikTok Rádió?</p>
 
     <button onclick="voteFixed('A')">👍 Igen</button>
