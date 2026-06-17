@@ -225,3 +225,84 @@ box.innerHTML+=`<div class="box">${s}</div>`;
 
 </body>
 </html>
+<!-- FIREBASE + RÁDIÓ RENDSZER -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
+<script>
+// 🔥 IDE ILLESZD BE A SAJÁT FIREBASE ADATAIDAT
+const firebaseConfig = {
+  apiKey: "IDE_A_TIÉD",
+  authDomain: "IDE_A_TIÉD",
+  databaseURL: "IDE_A_TIÉD",
+  projectId: "IDE_A_TIÉD",
+  storageBucket: "IDE_A_TIÉD",
+  messagingSenderId: "IDE_A_TIÉD",
+  appId: "IDE_A_TIÉD"
+};
+
+// INIT
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// =======================
+// 🎧 ON AIR ÁLLAPOT
+// =======================
+const onAirRef = db.ref("onAir");
+
+onAirRef.on("value", snap => {
+  const status = snap.val();
+  const el = document.getElementById("onair");
+
+  if(status){
+    el.innerText = "🔴 ON AIR";
+    el.style.color = "red";
+    el.style.textShadow = "0 0 20px red";
+  } else {
+    el.innerText = "⚫ OFF AIR";
+    el.style.color = "gray";
+  }
+});
+
+// =======================
+// 🗳 FIX SZAVAZÁS
+// =======================
+function voteFixed(val){
+  db.ref("votes/fixed/"+val).transaction(n => (n||0)+1);
+}
+
+// =======================
+// 🗳 NAPI SZAVAZÁS
+// =======================
+function voteDaily(val){
+  db.ref("votes/daily/"+val).transaction(n => (n||0)+1);
+}
+
+// =======================
+// 💌 ÜZENET KÜLDÉS (CSAK ADMIN LÁTJA)
+// =======================
+function sendMessage(){
+  const msg = document.getElementById("msg").value;
+
+  db.ref("messages").push({
+    text: msg,
+    time: Date.now()
+  });
+
+  alert("Üzenet elküldve!");
+}
+
+// =======================
+// 🎵 ZENEKÉRÉS
+// =======================
+function requestSong(){
+  const song = document.getElementById("song").value;
+
+  db.ref("songs").push({
+    text: song,
+    time: Date.now()
+  });
+
+  alert("Kérés elküldve!");
+}
+</script>
