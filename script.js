@@ -1,32 +1,33 @@
-
-/* 🗳️ FIX */
 let fixed = JSON.parse(localStorage.getItem("fixedVotes")) || {
     A: 0, B: 0, C: 0
 };
 
-/* 🟣 NAPI */
 let dailyVotes = JSON.parse(localStorage.getItem("dailyVotes")) || [0,0,0];
+
 let question = localStorage.getItem("dailyQuestion") || "Nincs napi kérdés";
+
 let options = JSON.parse(localStorage.getItem("dailyOptions")) || ["A","B","C"];
 
-/* 📩 */
 let contact = localStorage.getItem("contact") || "radioradio@example.com";
 
-/* 🔴 LIVE */
+/* LIVE */
 function updateLive() {
     let live = localStorage.getItem("live") === "true";
 
     let status = document.getElementById("status");
     let card = document.getElementById("liveCard");
+    let wave = document.getElementById("wave");
 
     if (live) {
         status.innerHTML = "🔴 ON AIR – Élő adás folyamatban!";
         status.className = "live-on";
         card.classList.add("live-active");
+        wave.classList.remove("wave-off");
     } else {
         status.innerHTML = "⚫ Nincs élő adás jelenleg";
         status.className = "live-off";
         card.classList.remove("live-active");
+        wave.classList.add("wave-off");
     }
 }
 
@@ -61,9 +62,8 @@ function renderDaily() {
 }
 
 /* MŰSOR */
-let program = JSON.parse(localStorage.getItem("program")) || [];
-
 function renderProgram() {
+    let program = JSON.parse(localStorage.getItem("program")) || [];
     let html = "";
 
     if (program.length === 0) {
@@ -95,5 +95,4 @@ renderProgram();
 renderContact();
 updateLive();
 
-/* frissítés */
 setInterval(updateLive, 2000);
