@@ -1,52 +1,58 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin - TikTok Rádió</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
 
-<h1>🔐 Admin panel</h1>
+/* 🔴 LIVE */
+function toggleLive() {
+    let live = localStorage.getItem("live") === "true";
+    localStorage.setItem("live", !live);
+    alert(live ? "LIVE OFF" : "LIVE ON");
+}
 
-<!-- LIVE -->
-<section class="card">
-    <h2>🔴 LIVE kapcsoló</h2>
-    <button onclick="toggleLive()">LIVE ON/OFF</button>
-</section>
+/* 📅 MŰSOR */
+function addProgram() {
+    let from = document.getElementById("from").value;
+    let to = document.getElementById("to").value;
+    let desc = document.getElementById("desc").value;
 
-<!-- MŰSOR -->
-<section class="card">
-    <h2>📅 Műsor hozzáadás</h2>
+    let program = JSON.parse(localStorage.getItem("program")) || [];
 
-    <input id="from" placeholder="tól (pl. 13:00)">
-    <input id="to" placeholder="ig (pl. 14:00)">
-    <input id="desc" placeholder="műsor leírás">
+    program.push({ from, to, desc });
 
-    <button onclick="addProgram()">Hozzáadás</button>
+    localStorage.setItem("program", JSON.stringify(program));
 
-    <ul id="programList"></ul>
-</section>
+    render();
+}
 
-<!-- FIX SZAVAZÁS TÉMA -->
-<section class="card">
-    <h2>📊 Állandó szavazás</h2>
-    <input id="topicInput" placeholder="pl: Tetszik a rádió?">
-    <button onclick="setTopic()">Mentés</button>
-</section>
+function render() {
+    let list = document.getElementById("programList");
+    list.innerHTML = "";
 
-<!-- 🟣 NAPI SZAVAZÁS -->
-<section class="card">
-    <h2>🗳️ Napi szavazás beállítás</h2>
+    let program = JSON.parse(localStorage.getItem("program")) || [];
 
-    <input id="q" placeholder="kérdés">
-    <input id="o1" placeholder="válasz 1">
-    <input id="o2" placeholder="válasz 2">
-    <input id="o3" placeholder="válasz 3">
+    program.forEach((p, i) => {
+        let li = document.createElement("li");
+        li.innerHTML = `${p.from} - ${p.to} → ${p.desc}`;
+        list.appendChild(li);
+    });
+}
 
-    <button onclick="setDaily()">Mentés</button>
-</section>
+/* 📊 FIX SZAVAZÁS TÉMA */
+function setTopic() {
+    let topic = document.getElementById("topicInput").value;
+    localStorage.setItem("fixedTopic", topic);
+    alert("Mentve!");
+}
 
-<script src="admin.js"></script>
-</body>
-</html>
+/* 🟣 NAPI SZAVAZÁS */
+function setDaily() {
+    let q = document.getElementById("q").value;
+    let o1 = document.getElementById("o1").value;
+    let o2 = document.getElementById("o2").value;
+    let o3 = document.getElementById("o3").value;
+
+    localStorage.setItem("dailyQuestion", q);
+    localStorage.setItem("dailyOptions", JSON.stringify([o1,o2,o3]));
+    localStorage.setItem("dailyVotes", JSON.stringify([0,0,0]));
+
+    alert("Napi szavazás beállítva!");
+}
+
+render();
