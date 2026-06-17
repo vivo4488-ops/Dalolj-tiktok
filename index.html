@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <title>TikTok Rádió Lacival</title>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <style>
 body{
 margin:0;
@@ -16,21 +13,13 @@ color:white;
 text-align:center;
 }
 
-h1{margin:20px;}
-
 section{
-margin:15px auto;
+margin:20px auto;
 width:90%;
 max-width:700px;
 padding:15px;
 background:rgba(255,255,255,0.05);
 border-radius:10px;
-}
-
-input,textarea{
-width:90%;
-padding:10px;
-margin:5px;
 }
 
 button{
@@ -39,16 +28,13 @@ margin:5px;
 cursor:pointer;
 }
 
-#liveBox{
+#live{
 padding:15px;
-margin:10px;
+background:red;
 border-radius:10px;
-background:#333;
-font-size:20px;
+margin:10px;
 }
 
-.on{background:red;}
-.off{background:#333;}
 </style>
 </head>
 
@@ -56,114 +42,29 @@ font-size:20px;
 
 <h1>🎧 TikTok Rádió Lacival</h1>
 
-<div id="liveBox" class="off">Betöltés...</div>
+<div id="live">🔴 ON AIR (teszt)</div>
 
 <section>
-<h2>💬 Üzenet / Zenekérés</h2>
-<input id="name" placeholder="Neved">
-<textarea id="msg" placeholder="Üzenet vagy zene"></textarea>
-<button onclick="sendMsg()">Küldés</button>
-<p id="status"></p>
-</section>
-
-<section>
-<h2>📩 Üzenetek</h2>
-<div id="messages"></div>
+<h2>📢 Bemutatkozás</h2>
+<p>
+Ez a TikTok Rádió Lacival oldal 🎧<br>
+Zenék, szavazások és élő műsor.
+</p>
 </section>
 
 <section>
 <h2>📊 Szavazás</h2>
-<button onclick="vote('igen')">Igen</button>
-<button onclick="vote('nem')">Nem</button>
-<button onclick="vote('jovo')">Van jövője</button>
-<p id="votes"></p>
+<button onclick="alert('Igen')">Igen</button>
+<button onclick="alert('Nem')">Nem</button>
+<button onclick="alert('Van jövője')">Van jövője</button>
 </section>
 
-<script>
-
-/* 🔥 FIREBASE CONFIG (KITÖLTENDŐ) */
-const firebaseConfig = {
-  apiKey: "IDE",
-  authDomain: "IDE",
-  databaseURL: "IDE",
-  projectId: "IDE",
-  storageBucket: "IDE",
-  messagingSenderId: "IDE",
-  appId: "IDE"
-};
-
-/* INIT SAFELY */
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-/* LIVE */
-function setLiveUI(){
-let live = localStorage.getItem("live");
-let box = document.getElementById("liveBox");
-
-if(live === "true"){
-box.innerText = "🔴 ÉLŐ ADÁS VAN";
-box.className = "on";
-}else{
-box.innerText = "⚫ NINCS ÉLŐ ADÁS";
-box.className = "off";
-}
-}
-
-/* ÜZENET KÜLDÉS */
-function sendMsg(){
-let n = document.getElementById("name").value;
-let m = document.getElementById("msg").value;
-
-if(!n || !m){
-status.innerText="Tölts ki mindent!";
-return;
-}
-
-db.ref("messages").push({
-name:n,
-msg:m,
-time:new Date().toLocaleString()
-});
-
-status.innerText="Elküldve 🎧";
-
-name.value="";
-msg.value="";
-}
-
-/* ÜZENET LISTA */
-db.ref("messages").on("value",snap=>{
-let data = snap.val() || {};
-let box = document.getElementById("messages");
-box.innerHTML="";
-
-for(let id in data){
-let m = data[id];
-
-let d = document.createElement("div");
-d.style.border="1px solid gray";
-d.style.margin="5px";
-d.style.padding="5px";
-d.innerHTML=`<b>${m.name}</b>: ${m.msg}`;
-box.appendChild(d);
-}
-});
-
-/* SZAVAZÁS */
-function vote(v){
-let d = JSON.parse(localStorage.getItem("votes")) || {igen:0,nem:0,jovo:0};
-d[v]++;
-localStorage.setItem("votes",JSON.stringify(d));
-
-document.getElementById("votes").innerText =
-`Igen: ${d.igen} | Nem: ${d.nem} | Jövő: ${d.jovo}`;
-}
-
-/* INIT */
-setLiveUI();
-
-</script>
+<section>
+<h2>💬 Üzenet (teszt)</h2>
+<input placeholder="Neved"><br>
+<textarea placeholder="Üzenet"></textarea><br>
+<button>Küldés (teszt)</button>
+</section>
 
 </body>
 </html>
