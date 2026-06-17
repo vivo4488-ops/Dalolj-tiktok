@@ -18,20 +18,15 @@ body {
   margin:15px 0;
   border-radius:10px;
 }
-
-button {
-  padding:10px;
-  margin:5px;
-}
 </style>
 </head>
 
 <body>
 
-<h1>🔧 ADMIN PANEL</h1>
+<h1>🔧 ADMIN</h1>
 
 <button onclick="loadData()">Frissítés</button>
-<button onclick="clearAll()">Összes törlése</button>
+<button onclick="clearAll()">Törlés</button>
 
 <div class="box">
 <h2>📩 Üzenetek</h2>
@@ -39,7 +34,7 @@ button {
 </div>
 
 <div class="box">
-<h2>🎵 Zenekérések</h2>
+<h2>🎵 Zenék</h2>
 <div id="songs"></div>
 </div>
 
@@ -48,24 +43,22 @@ function loadData(){
   const messages = JSON.parse(localStorage.getItem("messages") || "[]");
   const songs = JSON.parse(localStorage.getItem("songs") || "[]");
 
-  let mHTML = "";
-  messages.forEach(m => {
-    mHTML += "<p>🕒 " + m.time + "<br>💬 " + m.text + "</p><hr>";
+  let m = "";
+  messages.forEach(x=>{
+    m += "<p>"+x.time+"<br>"+x.text+"</p><hr>";
   });
-  document.getElementById("messages").innerHTML = mHTML;
+  document.getElementById("messages").innerHTML = m;
 
-  let sHTML = "";
-  songs.forEach(s => {
-    sHTML += "<p>🕒 " + s.time + "<br>🎵 " + s.text + "</p><hr>";
+  let s = "";
+  songs.forEach(x=>{
+    s += "<p>"+x.time+"<br>"+x.text+"</p><hr>";
   });
-  document.getElementById("songs").innerHTML = sHTML;
+  document.getElementById("songs").innerHTML = s;
 }
 
 function clearAll(){
-  if(confirm("Biztos törlöd?")){
-    localStorage.clear();
-    loadData();
-  }
+  localStorage.clear();
+  loadData();
 }
 
 loadData();
