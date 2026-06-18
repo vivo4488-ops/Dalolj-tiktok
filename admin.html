@@ -191,7 +191,7 @@ await db.collection("schedule").doc(id).delete();
 loadSchedule();
 };
 
-/* ================= FIX SZAVAZÁS ================= */
+/* ================= FIX SZAVAZÁS (JAVÍTVA) ================= */
 async function loadFixed(){
 let doc = await db.collection("fixed").doc("main").get();
 let data = doc.data();
@@ -200,22 +200,29 @@ if(!data) return;
 
 fixedQ.value = data.q || "";
 
+// meglévő opciók betöltése
 let keys = Object.keys(data.o || {});
 fixedA.value = keys[0] || "";
 fixedB.value = keys[1] || "";
 }
 
 window.saveFixed = async ()=>{
+
+let doc = await db.collection("fixed").doc("main").get();
+let old = doc.data() || {o:{}};
+
+// MEGŐRZI A SZAVAZATOKAT
+let newOptions = {};
+newOptions[fixedA.value] = old.o[fixedA.value] || 0;
+newOptions[fixedB.value] = old.o[fixedB.value] || 0;
+
 await db.collection("fixed").doc("main").set({
 q: fixedQ.value,
-o: {
-  [fixedA.value]: 0,
-  [fixedB.value]: 0
-}
+o: newOptions
 });
 };
 
-/* ================= NAPI SZAVAZÁS ================= */
+/* ================= NAPI SZAVAZÁS (JAVÍTVA) ================= */
 async function loadDaily(){
 let doc = await db.collection("daily").doc("main").get();
 let data = doc.data();
@@ -230,15 +237,21 @@ dailyB.value = keys[1] || "";
 }
 
 window.saveDaily = async ()=>{
+
+let doc = await db.collection("daily").doc("main").get();
+let old = doc.data() || {o:{}};
+
+let newOptions = {};
+newOptions[dailyA.value] = old.o[dailyA.value] || 0;
+newOptions[dailyB.value] = old.o[dailyB.value] || 0;
+
 await db.collection("daily").doc("main").set({
 q: dailyQ.value,
-o: {
-  [dailyA.value]: 0,
-  [dailyB.value]: 0
-}
+o: newOptions
 });
+};
 
-/* INIT */
+/* ================= INIT ================= */
 loadSongs();
 loadMessages();
 loadSchedule();
