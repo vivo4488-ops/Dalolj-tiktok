@@ -61,53 +61,74 @@ input {
 <button onclick="addSchedule()">Mentés</button>
 </section>
 
-<script type="module">
-import { db } from "./firebase.js";
-import { collection, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-/* ZENEKÉRÉSEK */
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyBXaLcFO9bcm7DMn6UcYLFTQTlzhXhwiT0",
+  authDomain: "tiktok-radi.firebaseapp.com",
+  databaseURL: "https://tiktok-radi-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "tiktok-radi",
+  storageBucket: "tiktok-radi.firebasestorage.app",
+  messagingSenderId: "480663171336",
+  appId: "1:480663171336:web:cf869ccc9e3e888ab3fcbd",
+  measurementId: "G-S1N62DWC3X"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+/* ZENÉK */
 async function loadSongs(){
 songs.innerHTML="";
-let q = await getDocs(collection(db,"songs"));
+let q = await db.collection("songs").get();
 
 q.forEach(d=>{
-let div=document.createElement("div");
-div.className="item";
+let div = document.createElement("div");
+div.className = "item";
+
 div.innerHTML = `
 <span>${d.data().song}</span>
 <button onclick="deleteSong('${d.id}')">Törlés</button>
 `;
+
 songs.appendChild(div);
 });
 }
-window.deleteSong = async(id)=>{
-await deleteDoc(doc(db,"songs",id));
+
+window.deleteSong = async (id)=>{
+await db.collection("songs").doc(id).delete();
 loadSongs();
 };
 
 /* ÜZENETEK */
 async function loadMessages(){
 messages.innerHTML="";
-let q = await getDocs(collection(db,"messages"));
+let q = await db.collection("messages").get();
 
 q.forEach(d=>{
-let div=document.createElement("div");
-div.className="item";
+let div = document.createElement("div");
+div.className = "item";
+
 div.innerHTML = `
 <span>${d.data().text}</span>
 <button onclick="deleteMsg('${d.id}')">Törlés</button>
 `;
+
 messages.appendChild(div);
 });
 }
-window.deleteMsg = async(id)=>{
-await deleteDoc(doc(db,"messages",id));
+
+window.deleteMsg = async (id)=>{
+await db.collection("messages").doc(id).delete();
 loadMessages();
 };
 
 /* TEMATIKA */
 window.addSchedule = async ()=>{
-await addDoc(collection(db,"schedule"),{
+await db.collection("schedule").add({
 time: time.value,
 text: text.value
 });
