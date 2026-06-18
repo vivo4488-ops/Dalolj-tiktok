@@ -10,15 +10,18 @@ body {
   background: #111;
   color: white;
 }
+
 h1 {
   text-align: center;
 }
+
 section {
   background: #1e1e1e;
   margin: 20px;
   padding: 15px;
   border-radius: 10px;
 }
+
 .item {
   background: #2a2a2a;
   padding: 10px;
@@ -26,6 +29,7 @@ section {
   display: flex;
   justify-content: space-between;
 }
+
 button {
   background: red;
   border: none;
@@ -33,6 +37,7 @@ button {
   padding: 5px;
   cursor: pointer;
 }
+
 input {
   margin: 5px;
   padding: 5px;
@@ -43,6 +48,16 @@ input {
 <body>
 
 <h1>🎧 Admin panel</h1>
+
+<!-- 🔐 LOGIN -->
+<div id="loginBox" style="text-align:center; margin-top:50px;">
+  <h2>🔐 Belépés</h2>
+  <input type="password" id="pass" placeholder="Jelszó">
+  <button onclick="login()">Belépés</button>
+</div>
+
+<!-- 🔥 ADMIN PANEL -->
+<div id="adminPanel" style="display:none;">
 
 <section>
 <h2>🎵 Zenekérések</h2>
@@ -61,11 +76,28 @@ input {
 <button onclick="addSchedule()">Mentés</button>
 </section>
 
+</div>
+
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
+/* 🔐 LOGIN */
+function login(){
+  const p = document.getElementById("pass").value;
+
+  if(p === "tiktok123"){
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
+    loadSongs();
+    loadMessages();
+  } else {
+    alert("Hibás jelszó!");
+  }
+}
+
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBXaLcFO9bcm7DMn6UcYLFTQTlzhXhwiT0",
   authDomain: "tiktok-radi.firebaseapp.com",
@@ -80,7 +112,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ZENÉK */
+/* 🎵 ZENE */
 async function loadSongs(){
 songs.innerHTML="";
 let q = await db.collection("songs").get();
@@ -103,7 +135,7 @@ await db.collection("songs").doc(id).delete();
 loadSongs();
 };
 
-/* ÜZENETEK */
+/* 💬 ÜZENET */
 async function loadMessages(){
 messages.innerHTML="";
 let q = await db.collection("messages").get();
@@ -126,7 +158,7 @@ await db.collection("messages").doc(id).delete();
 loadMessages();
 };
 
-/* TEMATIKA */
+/* 📅 TEMATIKA */
 window.addSchedule = async ()=>{
 await db.collection("schedule").add({
 time: time.value,
@@ -134,11 +166,6 @@ text: text.value
 });
 alert("Mentve!");
 };
-
-/* BETÖLTÉS */
-loadSongs();
-loadMessages();
-
 </script>
 
 </body>
