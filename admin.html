@@ -1,42 +1,123 @@
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>Admin</title>
+<title>Admin - TikTok Rádió</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+}
+h1 {
+  text-align: center;
+}
+section {
+  background: #1e1e1e;
+  margin: 20px;
+  padding: 15px;
+  border-radius: 10px;
+}
+.item {
+  background: #2a2a2a;
+  padding: 10px;
+  margin: 5px 0;
+  display: flex;
+  justify-content: space-between;
+}
+button {
+  background: red;
+  border: none;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+}
+input {
+  margin: 5px;
+  padding: 5px;
+}
+</style>
 </head>
+
 <body>
 
-<h1>Admin panel</h1>
+<h1>🎧 Admin panel</h1>
 
-<h2>Üzenetek</h2>
-<ul id="msgs"></ul>
+<section>
+<h2>🎵 Zenekérések</h2>
+<div id="songs"></div>
+</section>
 
-<h2>Tematika hozzáadás</h2>
-<input id="time" placeholder="idő (pl 18:00)">
-<input id="text" placeholder="mi lesz">
+<section>
+<h2>💬 Üzenetek</h2>
+<div id="messages"></div>
+</section>
+
+<section>
+<h2>📅 Tematika hozzáadás</h2>
+<input id="time" placeholder="Idő (pl 18:00)">
+<input id="text" placeholder="Műsor">
 <button onclick="addSchedule()">Mentés</button>
+</section>
 
 <script type="module">
 import { db } from "./firebase.js";
-import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, getDocs, deleteDoc, doc, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-async function loadMsgs(){
-let q=await getDocs(collection(db,"messages"));
+/* ZENEKÉRÉSEK */
+async function loadSongs(){
+songs.innerHTML="";
+let q = await getDocs(collection(db,"songs"));
+
 q.forEach(d=>{
-let li=document.createElement("li");
-li.innerText=d.data().text;
-msgs.appendChild(li);
+let div=document.createElement("div");
+div.className="item";
+div.innerHTML = `
+<span>${d.data().song}</span>
+<button onclick="deleteSong('${d.id}')">Törlés</button>
+`;
+songs.appendChild(div);
 });
 }
-loadMsgs();
+window.deleteSong = async(id)=>{
+await deleteDoc(doc(db,"songs",id));
+loadSongs();
+};
 
+/* ÜZENETEK */
+async function loadMessages(){
+messages.innerHTML="";
+let q = await getDocs(collection(db,"messages"));
+
+q.forEach(d=>{
+let div=document.createElement("div");
+div.className="item";
+div.innerHTML = `
+<span>${d.data().text}</span>
+<button onclick="deleteMsg('${d.id}')">Törlés</button>
+`;
+messages.appendChild(div);
+});
+}
+window.deleteMsg = async(id)=>{
+await deleteDoc(doc(db,"messages",id));
+loadMessages();
+};
+
+/* TEMATIKA */
 window.addSchedule = async ()=>{
 await addDoc(collection(db,"schedule"),{
-time:time.value,
-text:text.value
+time: time.value,
+text: text.value
 });
-alert("Mentve");
+alert("Mentve!");
 };
+
+/* BETÖLTÉS */
+loadSongs();
+loadMessages();
+
 </script>
 
 </body>
