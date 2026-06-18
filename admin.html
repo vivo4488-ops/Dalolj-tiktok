@@ -191,7 +191,20 @@ await db.collection("schedule").doc(id).delete();
 loadSchedule();
 };
 
-/* ================= SZAVAZÁS ================= */
+/* ================= FIX SZAVAZÁS ================= */
+async function loadFixed(){
+let doc = await db.collection("fixed").doc("main").get();
+let data = doc.data();
+
+if(!data) return;
+
+fixedQ.value = data.q || "";
+
+let keys = Object.keys(data.o || {});
+fixedA.value = keys[0] || "";
+fixedB.value = keys[1] || "";
+}
+
 window.saveFixed = async ()=>{
 await db.collection("fixed").doc("main").set({
 q: fixedQ.value,
@@ -202,6 +215,20 @@ o: {
 });
 };
 
+/* ================= NAPI SZAVAZÁS ================= */
+async function loadDaily(){
+let doc = await db.collection("daily").doc("main").get();
+let data = doc.data();
+
+if(!data) return;
+
+dailyQ.value = data.q || "";
+
+let keys = Object.keys(data.o || {});
+dailyA.value = keys[0] || "";
+dailyB.value = keys[1] || "";
+}
+
 window.saveDaily = async ()=>{
 await db.collection("daily").doc("main").set({
 q: dailyQ.value,
@@ -210,12 +237,13 @@ o: {
   [dailyB.value]: 0
 }
 });
-};
 
 /* INIT */
 loadSongs();
 loadMessages();
 loadSchedule();
+loadFixed();
+loadDaily();
 
 </script>
 
