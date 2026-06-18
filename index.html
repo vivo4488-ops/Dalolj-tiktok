@@ -2,73 +2,158 @@
 <html lang="hu">
 <head>
 <meta charset="UTF-8">
-<title>TikTok Rádió</title>
+<title>TikTok Rádió - Vendég</title>
 
 <style>
 body {
-  font-family: Arial;
-  background: #0f0f0f;
-  color: white;
   margin: 0;
+  font-family: Arial;
+  background: #0b0b0b;
+  color: white;
+  overflow-x: hidden;
 }
+
+/* 🎵 animált háttér */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: radial-gradient(circle at center, #ff005055, #000);
+  animation: pulse 6s infinite;
+}
+
+@keyframes pulse {
+  0% { filter: blur(0px) brightness(1); }
+  50% { filter: blur(3px) brightness(1.3); }
+  100% { filter: blur(0px) brightness(1); }
+}
+
+/* 🎧 layout */
 header {
   background: #ff0050;
   padding: 20px;
   text-align: center;
-  font-size: 28px;
+  font-size: 26px;
 }
+
 section {
-  padding: 20px;
-  margin: 10px;
-  background: #1a1a1a;
+  background: #151515;
+  margin: 15px;
+  padding: 15px;
   border-radius: 10px;
 }
+
+/* gomb */
 button {
   background: #ff0050;
-  color: white;
   border: none;
+  color: white;
   padding: 10px;
   cursor: pointer;
+  margin: 5px;
 }
+
+/* input */
 input, textarea {
   width: 100%;
-  margin: 5px 0;
   padding: 8px;
+  margin-top: 5px;
+}
+
+/* 🎵 wave animáció */
+.wave {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.bar {
+  width: 5px;
+  height: 20px;
+  margin: 2px;
+  background: #ff0050;
+  animation: wave 1s infinite ease-in-out;
+}
+
+.bar:nth-child(2) { animation-delay: 0.1s; }
+.bar:nth-child(3) { animation-delay: 0.2s; }
+.bar:nth-child(4) { animation-delay: 0.3s; }
+.bar:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave {
+  0%,100% { height: 10px; }
+  50% { height: 40px; }
 }
 </style>
 </head>
 
 <body>
 
+<div class="background"></div>
+
 <header>🎧 TikTok Rádió</header>
 
+<div class="wave">
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+</div>
+
+<!-- 📌 LEÍRÁS -->
+<section>
+<h2>📌 Információ</h2>
+<p>
+Ez a TikTok Rádió vendég oldala.<br><br>
+
+Itt tudsz:
+<ul>
+<li>🎵 zenét kérni az élő adásba</li>
+<li>💬 üzenetet küldeni (pl. szerelmes üzenet)</li>
+<li>🗳 szavazni napi és fix kérdésekre</li>
+</ul>
+
+Az üzeneteket az admin látja és élő adásban felolvassa.
+</p>
+</section>
+
+<!-- 📩 ELÉRHETŐSÉG -->
+<section>
+<h2>📩 Elérhetőség / reklám</h2>
+<p>
+Reklám, együttműködés, üzenet:<br>
+<b>kohegyim44@gmail.com</b>
+</p>
+</section>
+
+<!-- 🎵 ZENEKÉRÉS -->
 <section>
 <h2>🎵 Zenekérés</h2>
-<form id="songForm">
-<input id="song" placeholder="Kért dal">
-<button>Küldés</button>
-</form>
-<ul id="songs"></ul>
+<input id="song" placeholder="Kért zene">
+<button onclick="sendSong()">Küldés</button>
 </section>
 
+<!-- 💬 ÜZENET -->
 <section>
-<h2>💬 Üzenet küldése</h2>
-<form id="msgForm">
-<textarea id="msg" placeholder="Üzenet"></textarea>
-<button>Küldés</button>
-</form>
+<h2>💬 Üzenet</h2>
+<textarea id="msg" placeholder="Írd az üzeneted..."></textarea>
+<button onclick="sendMsg()">Küldés</button>
 </section>
 
+<!-- 🗳 FIX SZAVAZÁS -->
 <section>
-<h2>📅 Mai tematika</h2>
-<div id="schedule"></div>
-</section>
-
-<section>
-<h2>📊 Szavazások</h2>
+<h2>🗳 Fix szavazás</h2>
 <p id="fixedQ"></p>
 <div id="fixedOptions"></div>
+</section>
 
+<!-- 🗳 NAPI SZAVAZÁS -->
+<section>
+<h2>📊 Napi szavazás</h2>
 <p id="dailyQ"></p>
 <div id="dailyOptions"></div>
 </section>
@@ -92,38 +177,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ZENÉK */
-songForm.onsubmit = async (e)=>{
-e.preventDefault();
-await db.collection("songs").add({
+/* 🎵 ZENE */
+function sendSong(){
+db.collection("songs").add({
 song: song.value
 });
 song.value="";
-loadSongs();
-};
-
-async function loadSongs(){
-songs.innerHTML="";
-let snap = await db.collection("songs").get();
-snap.forEach(d=>{
-let li=document.createElement("li");
-li.innerText=d.data().song;
-songs.appendChild(li);
-});
 }
-loadSongs();
 
-/* ÜZENET */
-msgForm.onsubmit = async (e)=>{
-e.preventDefault();
-await db.collection("messages").add({
+/* 💬 ÜZENET */
+function sendMsg(){
+db.collection("messages").add({
 text: msg.value
 });
 msg.value="";
 alert("Elküldve!");
-};
+}
 
-/* SZAVAZÁS */
+/* 🗳 SZAVAZÁS BETÖLTÉS */
 async function loadPolls(){
 
 let fixed = await db.collection("fixed").get();
@@ -132,7 +203,7 @@ let data = d.data();
 fixedQ.innerText = data.q;
 
 for(let k in data.o){
-let b=document.createElement("button");
+let b = document.createElement("button");
 b.innerText = k + " (" + data.o[k] + ")";
 b.onclick = async ()=>{
 data.o[k]++;
@@ -149,7 +220,7 @@ let data = d.data();
 dailyQ.innerText = data.q;
 
 for(let k in data.o){
-let b=document.createElement("button");
+let b = document.createElement("button");
 b.innerText = k + " (" + data.o[k] + ")";
 b.onclick = async ()=>{
 data.o[k]++;
@@ -160,20 +231,8 @@ dailyOptions.appendChild(b);
 }
 });
 }
+
 loadPolls();
-
-/* TEMATIKA */
-async function loadSchedule(){
-let q = await db.collection("schedule").get();
-schedule.innerHTML="";
-q.forEach(d=>{
-let div=document.createElement("div");
-div.innerText=d.data().time + " - " + d.data().text;
-schedule.appendChild(div);
-});
-}
-loadSchedule();
-
 </script>
 
 </body>
