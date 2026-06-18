@@ -1,87 +1,42 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>Admin</title>
-
-<style>
-body{
-  font-family:Arial;
-  background:#111;
-  color:white;
-  padding:20px;
-}
-
-.box{
-  background:#222;
-  padding:15px;
-  margin:10px 0;
-  border-radius:10px;
-}
-
-input{
-  width:80%;
-  padding:10px;
-}
-
-button{
-  padding:10px;
-  margin:5px;
-  background:#00ccff;
-  border:none;
-  border-radius:8px;
-}
-</style>
 </head>
-
 <body>
 
-<h1>🎛 ADMIN PANEL</h1>
+<h1>Admin panel</h1>
 
-<div class="box">
-<h2>📅 Tematika</h2>
-<input id="theme"><br>
-<button onclick="saveTheme()">Mentés</button>
-</div>
+<h2>Üzenetek</h2>
+<ul id="msgs"></ul>
 
-<div class="box">
-<h2>🎵 Zenei stílus</h2>
-<input id="style"><br>
-<button onclick="saveStyle()">Mentés</button>
-</div>
+<h2>Tematika hozzáadás</h2>
+<input id="time" placeholder="idő (pl 18:00)">
+<input id="text" placeholder="mi lesz">
+<button onclick="addSchedule()">Mentés</button>
 
-<div class="box">
-<h2>🗳 Napi szavazás kérdés</h2>
-<input id="dailyQ"><br>
-<button onclick="saveDaily()">Mentés</button>
-</div>
+<script type="module">
+import { db } from "./firebase.js";
+import { collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<div class="box">
-<h2>🔄 Szavazás nullázása</h2>
-<button onclick="reset()">RESET</button>
-</div>
-
-<script>
-
-function saveTheme(){
-  localStorage.setItem("theme",document.getElementById("theme").value);
+async function loadMsgs(){
+let q=await getDocs(collection(db,"messages"));
+q.forEach(d=>{
+let li=document.createElement("li");
+li.innerText=d.data().text;
+msgs.appendChild(li);
+});
 }
+loadMsgs();
 
-function saveStyle(){
-  localStorage.setItem("style",document.getElementById("style").value);
-}
-
-function saveDaily(){
-  localStorage.setItem("dailyQ",document.getElementById("dailyQ").value);
-}
-
-function reset(){
-  localStorage.setItem("fixedA",0);
-  localStorage.setItem("fixedB",0);
-  localStorage.setItem("dailyA",0);
-  localStorage.setItem("dailyB",0);
-}
-
+window.addSchedule = async ()=>{
+await addDoc(collection(db,"schedule"),{
+time:time.value,
+text:text.value
+});
+alert("Mentve");
+};
 </script>
 
 </body>
