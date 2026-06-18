@@ -5,44 +5,37 @@
 <title>Admin - TikTok Rádió</title>
 
 <style>
-body {
-  font-family: Arial;
-  background: #111;
-  color: white;
-}
-
-h1 {
-  text-align: center;
-}
+body { font-family: Arial; background:#111; color:white; }
+h1 { text-align:center; }
 
 section {
-  background: #1e1e1e;
-  margin: 20px;
-  padding: 15px;
-  border-radius: 10px;
+  background:#1e1e1e;
+  margin:20px;
+  padding:15px;
+  border-radius:10px;
 }
 
 .item {
-  background: #2a2a2a;
-  padding: 10px;
-  margin: 5px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background:#2a2a2a;
+  padding:10px;
+  margin:5px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 button {
-  background: red;
-  border: none;
-  color: white;
-  padding: 5px;
-  cursor: pointer;
+  background:red;
+  border:none;
+  color:white;
+  padding:5px;
+  cursor:pointer;
 }
 
 input {
-  margin: 5px 0;
-  padding: 5px;
-  width: 100%;
+  width:100%;
+  padding:5px;
+  margin:5px 0;
 }
 </style>
 </head>
@@ -51,30 +44,30 @@ input {
 
 <h1>🎧 Admin panel</h1>
 
-<!-- 🎵 ZENE -->
+<!-- ZENE -->
 <section>
 <h2>🎵 Zenekérések</h2>
 <div id="songs"></div>
 </section>
 
-<!-- 💬 ÜZENET -->
+<!-- ÜZENET -->
 <section>
 <h2>💬 Üzenetek</h2>
 <div id="messages"></div>
 </section>
 
-<!-- 📅 TEMATIKA -->
+<!-- TEMATIKA -->
 <section>
 <h2>📅 Tematika</h2>
 
-<input id="schTime" placeholder="Idő (pl 18:00)">
-<input id="schText" placeholder="Műsor neve">
+<input id="schTime" placeholder="Idő">
+<input id="schText" placeholder="Műsor">
 <button onclick="addSchedule()">Hozzáadás</button>
 
 <div id="scheduleList"></div>
 </section>
 
-<!-- 🗳 FIX SZAVAZÁS -->
+<!-- FIX SZAVAZÁS -->
 <section>
 <h2>🗳 Fix szavazás</h2>
 
@@ -84,7 +77,7 @@ input {
 <button onclick="saveFixed()">Mentés</button>
 </section>
 
-<!-- 📊 NAPI SZAVAZÁS -->
+<!-- NAPI SZAVAZÁS -->
 <section>
 <h2>📊 Napi szavazás</h2>
 
@@ -109,15 +102,14 @@ const db = firebase.firestore();
 
 /* ================= ZENE ================= */
 async function loadSongs(){
-songs.innerHTML = "";
-
-let snap = await db.collection("songs").get();
+songs.innerHTML="";
+let snap=await db.collection("songs").get();
 
 snap.forEach(d=>{
-let div = document.createElement("div");
-div.className = "item";
+let div=document.createElement("div");
+div.className="item";
 
-div.innerHTML = `
+div.innerHTML=`
 <span>${d.data().song}</span>
 <button onclick="deleteSong('${d.id}')">Törlés</button>
 `;
@@ -126,22 +118,21 @@ songs.appendChild(div);
 });
 }
 
-window.deleteSong = async (id)=>{
+window.deleteSong=async(id)=>{
 await db.collection("songs").doc(id).delete();
 loadSongs();
 };
 
 /* ================= ÜZENET ================= */
 async function loadMessages(){
-messages.innerHTML = "";
-
-let snap = await db.collection("messages").get();
+messages.innerHTML="";
+let snap=await db.collection("messages").get();
 
 snap.forEach(d=>{
-let div = document.createElement("div");
-div.className = "item";
+let div=document.createElement("div");
+div.className="item";
 
-div.innerHTML = `
+div.innerHTML=`
 <span>${d.data().text}</span>
 <button onclick="deleteMsg('${d.id}')">Törlés</button>
 `;
@@ -150,22 +141,21 @@ messages.appendChild(div);
 });
 }
 
-window.deleteMsg = async (id)=>{
+window.deleteMsg=async(id)=>{
 await db.collection("messages").doc(id).delete();
 loadMessages();
 };
 
 /* ================= TEMATIKA ================= */
 async function loadSchedule(){
-scheduleList.innerHTML = "";
-
-let snap = await db.collection("schedule").get();
+scheduleList.innerHTML="";
+let snap=await db.collection("schedule").get();
 
 snap.forEach(d=>{
-let div = document.createElement("div");
-div.className = "item";
+let div=document.createElement("div");
+div.className="item";
 
-div.innerHTML = `
+div.innerHTML=`
 ${d.data().time} - ${d.data().text}
 <button onclick="deleteSchedule('${d.id}')">Törlés</button>
 `;
@@ -174,84 +164,77 @@ scheduleList.appendChild(div);
 });
 }
 
-window.addSchedule = async ()=>{
+window.addSchedule=async()=>{
 await db.collection("schedule").add({
-time: schTime.value,
-text: schText.value
+time:schTime.value,
+text:schText.value
 });
 
-schTime.value = "";
-schText.value = "";
-
+schTime.value="";
+schText.value="";
 loadSchedule();
 };
 
-window.deleteSchedule = async (id)=>{
+window.deleteSchedule=async(id)=>{
 await db.collection("schedule").doc(id).delete();
 loadSchedule();
 };
 
-/* ================= FIX SZAVAZÁS (JAVÍTVA) ================= */
+/* ================= FIX SZAVAZÁS ================= */
 async function loadFixed(){
-let doc = await db.collection("fixed").doc("main").get();
-let data = doc.data();
+let doc=await db.collection("fixed").doc("main").get();
+let data=doc.data()||{};
 
-if(!data) return;
+fixedQ.value=data.q||"";
 
-fixedQ.value = data.q || "";
-
-// meglévő opciók betöltése
-let keys = Object.keys(data.o || {});
-fixedA.value = keys[0] || "";
-fixedB.value = keys[1] || "";
+let keys=Object.keys(data.o||{});
+fixedA.value=keys[0]||"";
+fixedB.value=keys[1]||"";
 }
 
-window.saveFixed = async ()=>{
+window.saveFixed=async()=>{
+let doc=await db.collection("fixed").doc("main").get();
+let old=doc.data()||{o:{}};
 
-let doc = await db.collection("fixed").doc("main").get();
-let old = doc.data() || {o:{}};
-
-// MEGŐRZI A SZAVAZATOKAT
-let newOptions = {};
-newOptions[fixedA.value] = old.o[fixedA.value] || 0;
-newOptions[fixedB.value] = old.o[fixedB.value] || 0;
+let newO={
+  [fixedA.value]: old.o?.[fixedA.value]||0,
+  [fixedB.value]: old.o?.[fixedB.value]||0
+};
 
 await db.collection("fixed").doc("main").set({
-q: fixedQ.value,
-o: newOptions
+q:fixedQ.value,
+o:newO
 });
 };
 
 /* ================= NAPI SZAVAZÁS (JAVÍTVA) ================= */
 async function loadDaily(){
-let doc = await db.collection("daily").doc("main").get();
-let data = doc.data();
+let doc=await db.collection("daily").doc("main").get();
+let data=doc.data()||{};
 
-if(!data) return;
+dailyQ.value=data.q||"";
 
-dailyQ.value = data.q || "";
-
-let keys = Object.keys(data.o || {});
-dailyA.value = keys[0] || "";
-dailyB.value = keys[1] || "";
+let keys=Object.keys(data.o||{});
+dailyA.value=keys[0]||"";
+dailyB.value=keys[1]||"";
 }
 
-window.saveDaily = async ()=>{
+window.saveDaily=async()=>{
+let doc=await db.collection("daily").doc("main").get();
+let old=doc.data()||{o:{}};
 
-let doc = await db.collection("daily").doc("main").get();
-let old = doc.data() || {o:{}};
-
-let newOptions = {};
-newOptions[dailyA.value] = old.o[dailyA.value] || 0;
-newOptions[dailyB.value] = old.o[dailyB.value] || 0;
+let newO={
+  [dailyA.value]: old.o?.[dailyA.value]||0,
+  [dailyB.value]: old.o?.[dailyB.value]||0
+};
 
 await db.collection("daily").doc("main").set({
-q: dailyQ.value,
-o: newOptions
+q:dailyQ.value,
+o:newO
 });
 };
 
-/* ================= INIT ================= */
+/* INIT */
 loadSongs();
 loadMessages();
 loadSchedule();
