@@ -41,6 +41,7 @@ button {
 input {
   margin: 5px;
   padding: 5px;
+  width: 100%;
 }
 </style>
 </head>
@@ -49,55 +50,47 @@ input {
 
 <h1>🎧 Admin panel</h1>
 
-<!-- 🔐 LOGIN -->
-<div id="loginBox" style="text-align:center; margin-top:50px;">
-  <h2>🔐 Belépés</h2>
-  <input type="password" id="pass" placeholder="Jelszó">
-  <button onclick="login()">Belépés</button>
-</div>
-
-<!-- 🔥 ADMIN PANEL -->
-<div id="adminPanel" style="display:none;">
-
+<!-- 🎵 ZENE -->
 <section>
 <h2>🎵 Zenekérések</h2>
 <div id="songs"></div>
 </section>
 
+<!-- 💬 ÜZENET -->
 <section>
 <h2>💬 Üzenetek</h2>
 <div id="messages"></div>
 </section>
 
+<!-- 🗳 FIX SZAVAZÁS -->
 <section>
-<h2>📅 Tematika hozzáadás</h2>
-<input id="time" placeholder="Idő (pl 18:00)">
-<input id="text" placeholder="Műsor">
-<button onclick="addSchedule()">Mentés</button>
+<h2>🗳 Fix szavazás szerkesztés</h2>
+
+<input id="fixedQ" placeholder="Kérdés">
+<input id="fixedA" placeholder="Opció A">
+<input id="fixedB" placeholder="Opció B">
+<button onclick="saveFixed()">Mentés</button>
+
+<div id="fixedPreview"></div>
 </section>
 
-</div>
+<!-- 📊 NAPI SZAVAZÁS -->
+<section>
+<h2>📊 Napi szavazás szerkesztés</h2>
+
+<input id="dailyQ" placeholder="Kérdés">
+<input id="dailyA" placeholder="Opció A">
+<input id="dailyB" placeholder="Opció B">
+<button onclick="saveDaily()">Mentés</button>
+
+<div id="dailyPreview"></div>
+</section>
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* 🔐 LOGIN */
-function login(){
-  const p = document.getElementById("pass").value;
-
-  if(p === "tiktok123"){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
-    loadSongs();
-    loadMessages();
-  } else {
-    alert("Hibás jelszó!");
-  }
-}
-
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBXaLcFO9bcm7DMn6UcYLFTQTlzhXhwiT0",
   authDomain: "tiktok-radi.firebaseapp.com",
@@ -115,57 +108,107 @@ const db = firebase.firestore();
 /* 🎵 ZENE */
 async function loadSongs(){
 songs.innerHTML="";
-let q = await db.collection("songs").get();
+let snap = await db.collection("songs").get();
 
-q.forEach(d=>{
+snap.forEach(d=>{
 let div = document.createElement("div");
 div.className = "item";
 
-div.innerHTML = `
-<span>${d.data().song}</span>
-<button onclick="deleteSong('${d.id}')">Törlés</button>
-`;
+div.innerHTML = `<span>${d.data().song}</span>`;
 
 songs.appendChild(div);
 });
 }
 
-window.deleteSong = async (id)=>{
-await db.collection("songs").doc(id).delete();
-loadSongs();
-};
-
 /* 💬 ÜZENET */
 async function loadMessages(){
 messages.innerHTML="";
-let q = await db.collection("messages").get();
+let snap = await db.collection("messages").get();
 
-q.forEach(d=>{
+snap.forEach(d=>{
 let div = document.createElement("div");
 div.className = "item";
 
-div.innerHTML = `
-<span>${d.data().text}</span>
-<button onclick="deleteMsg('${d.id}')">Törlés</button>
-`;
+div.innerHTML = `<span>${d.data().text}</span>`;
 
 messages.appendChild(div);
 });
 }
 
-window.deleteMsg = async (id)=>{
-await db.collection("messages").doc(id).delete();
-loadMessages();
+/* 🗳 FIX SZAVAZÁS BETÖLTÉS */
+async function loadFixed(){
+let snap = await db.collection("fixed").get();
+
+snap.forEach(d=>{
+let data = d.data();
+
+fixedQ.value = data.q || "";
+
+let keys = Object.keys(data.o || {});
+fixedA.value = keys[0] || "";
+fixedB.value = keys[1] || "";
+
+fixedPreview.innerText = JSON.stringify(data.o);
+});
+}
+
+/* 📊 DAILY SZAVAZÁS BETÖLTÉS */
+async function loadDaily(){
+let snap = await db.collection("daily").get();
+
+snap.forEach(d=>{
+let data = d.data();
+
+dailyQ.value = data.q || "";
+
+let keys = Object.keys(data.o || {});
+dailyA.value = keys[0] || "";
+dailyB.value = keys[1] || "";
+
+dailyPreview.innerText = JSON.stringify(data.o);
+});
+}
+
+/* 💾 FIX MENTÉS */
+window.saveFixed = async ()=>{
+let snap = await db.collection("fixed").get();
+
+snap.forEach(async (d)=>{
+await db.collection("fixed").doc(d.id).update({
+q: fixedQ.value,
+o: {
+  [fixedA.value]: 0,
+  [fixedB.value]: 0
+}
+});
+});
+
+loadFixed();
 };
 
-/* 📅 TEMATIKA */
-window.addSchedule = async ()=>{
-await db.collection("schedule").add({
-time: time.value,
-text: text.value
+/* 💾 DAILY MENTÉS */
+window.saveDaily = async ()=>{
+let snap = await db.collection("daily").get();
+
+snap.forEach(async (d)=>{
+await db.collection("daily").doc(d.id).update({
+q: dailyQ.value,
+o: {
+  [dailyA.value]: 0,
+  [dailyB.value]: 0
+}
 });
-alert("Mentve!");
+});
+
+loadDaily();
 };
+
+/* 🚀 INDÍTÁS */
+loadSongs();
+loadMessages();
+loadFixed();
+loadDaily();
+
 </script>
 
 </body>
