@@ -32,12 +32,16 @@ button {
   border: none;
   padding: 10px;
   cursor: pointer;
-  margin: 5px;
+  margin: 5px 0;
 }
 
 input, textarea {
   width: 100%;
   padding: 8px;
+  margin-top: 5px;
+  background: #222;
+  color: white;
+  border: none;
 }
 </style>
 </head>
@@ -45,6 +49,30 @@ input, textarea {
 <body>
 
 <header>🎧 TikTok Rádió</header>
+
+<!-- 📌 LEÍRÁS -->
+<section>
+<h2>📌 Információ</h2>
+<p>
+Ez a TikTok Rádió vendég oldala.<br><br>
+
+Itt tudsz:
+<ul>
+<li>🎵 zenét kérni az élő adásba</li>
+<li>💬 üzenetet küldeni (pl. szerelmes üzenet)</li>
+<li>🗳 szavazni a műsorra</li>
+</ul>
+
+Az üzeneteket az admin látja és élőben felolvassa.
+</p>
+</section>
+
+<!-- 📩 ELÉRHETŐSÉG -->
+<section>
+<h2>📩 Elérhetőség</h2>
+<p>Reklám / együttműködés:</p>
+<b>kohegyim44@gmail.com</b>
+</section>
 
 <!-- 📅 TEMATIKA -->
 <section>
@@ -86,19 +114,19 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ZENE */
+/* 🎵 ZENE */
 function sendSong(){
 db.collection("songs").add({song: song.value});
 song.value="";
 }
 
-/* ÜZENET */
+/* 💬 ÜZENET */
 function sendMsg(){
 db.collection("messages").add({text: msg.value});
 msg.value="";
 }
 
-/* TEMATIKA */
+/* 📅 TEMATIKA */
 async function loadSchedule(){
 schedule.innerHTML = "";
 let snap = await db.collection("schedule").get();
@@ -110,12 +138,14 @@ schedule.appendChild(div);
 });
 }
 
-/* SZAVAZÁS */
+/* 🗳 SZAVAZÁS */
 async function loadPoll(){
 let d = await db.collection("fixed").doc("main").get();
 let data = d.data();
 
 q.innerText = data.q;
+
+opts.innerHTML = "";
 
 for(let k in data.o){
 let b = document.createElement("button");
