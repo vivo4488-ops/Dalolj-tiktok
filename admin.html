@@ -40,7 +40,7 @@ button {
 }
 
 input {
-  margin: 5px;
+  margin: 5px 0;
   padding: 5px;
   width: 100%;
 }
@@ -107,35 +107,58 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ===== ZENE ===== */
+/* ================= ZENE ================= */
 async function loadSongs(){
 songs.innerHTML = "";
+
 let snap = await db.collection("songs").get();
 
 snap.forEach(d=>{
 let div = document.createElement("div");
 div.className = "item";
-div.innerHTML = d.data().song;
+
+div.innerHTML = `
+<span>${d.data().song}</span>
+<button onclick="deleteSong('${d.id}')">Törlés</button>
+`;
+
 songs.appendChild(div);
 });
 }
 
-/* ===== ÜZENET ===== */
+window.deleteSong = async (id)=>{
+await db.collection("songs").doc(id).delete();
+loadSongs();
+};
+
+/* ================= ÜZENET ================= */
 async function loadMessages(){
 messages.innerHTML = "";
+
 let snap = await db.collection("messages").get();
 
 snap.forEach(d=>{
 let div = document.createElement("div");
 div.className = "item";
-div.innerHTML = d.data().text;
+
+div.innerHTML = `
+<span>${d.data().text}</span>
+<button onclick="deleteMsg('${d.id}')">Törlés</button>
+`;
+
 messages.appendChild(div);
 });
 }
 
-/* ===== TEMATIKA ===== */
+window.deleteMsg = async (id)=>{
+await db.collection("messages").doc(id).delete();
+loadMessages();
+};
+
+/* ================= TEMATIKA ================= */
 async function loadSchedule(){
 scheduleList.innerHTML = "";
+
 let snap = await db.collection("schedule").get();
 
 snap.forEach(d=>{
@@ -168,7 +191,7 @@ await db.collection("schedule").doc(id).delete();
 loadSchedule();
 };
 
-/* ===== FIX SZAVAZÁS ===== */
+/* ================= SZAVAZÁS ================= */
 window.saveFixed = async ()=>{
 await db.collection("fixed").doc("main").set({
 q: fixedQ.value,
@@ -179,7 +202,6 @@ o: {
 });
 };
 
-/* ===== NAPI SZAVAZÁS ===== */
 window.saveDaily = async ()=>{
 await db.collection("daily").doc("main").set({
 q: dailyQ.value,
